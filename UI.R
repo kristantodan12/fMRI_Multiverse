@@ -18,7 +18,7 @@ shinyWidgets::shinyWidgetsGallery()
 
 source("helper_function.R")
 
-ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), img(src="UOL.jpg", height = "50px") ), id = "navBar",
+ui <- shinyUI(navbarPage(title = img(src="metarep.jpg", height = "100px"), id = "navBar",
                          theme = "bootstrap.css",
                          collapsible = TRUE,
                          inverse = TRUE,
@@ -46,44 +46,58 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                        };
                                                        '))),
                                   fluidRow(
-                                    column(1),
-                                    column(10,
-                                           shiny::HTML("<br><br><center> <h1>METEOR</h1> </center><br>"),
-                                           shiny::HTML("<h3>MastEring ThE OppRessive number of forking paths 
-                                                        unfolded by noisy and complex neural data</h3>")
-                                  ),
-                                    column(1)
+                                    HTML("
+                                     <section class='banner'>
+                                     <h1 class='parallax'>METEOR</h1>
+                                     <h3 class='parallax_description'>MastEring ThE OppRessive number of forking paths 
+                                     unfolded by noisy and complex neural data</h3>
+                                     </section>
+                                     ")
                                   ),
                                   
                                   
                                   # WHAT
                                   fluidRow(
-                                    column(1),
-                                    column(10,
+                                    column(3),
+                                    column(6,
                                            shiny::HTML("<br><br><center> <h1>What you'll find here</h1> </center><br>"),
                                            shiny::HTML("<h3>An interactive tool to help you explore the forking paths 
                                                        in the data preprocessing and analyses multiverse of graph fMRI study.</h3>")
                                     ),
-                                    column(1)
+                                    column(3)
                                   ),
+                                  
+                                  fluidRow(
+                                    
+                                    style = "height:50px;"),
+                                  
+                                  # PAGE BREAK
+                                  tags$hr(),
+                                  
                                   
                                   
                                   # WHERE
                                   fluidRow(
-                                    column(1),
-                                    column(10,
+                                    column(3),
+                                    column(6,
                                            shiny::HTML("<br><br><center> <h1>Where it came from</h1> </center><br>"),
                                            shiny::HTML("<h3>The data are the results of literature review performed in 
                                                        multiple databases.</h3>")
                                     ),
-                                    column(1)
+                                    column(3)
                                   ),
                                   
+                                  fluidRow(
+                                    
+                                    style = "height:50px;"),
+                                  
+                                  # PAGE BREAK
+                                  tags$hr(),
                                   
                                   # HOW TO START
                                   fluidRow(
-                                    column(1),
-                                    column(10,
+                                    column(3),
+                                    column(6,
                                            shiny::HTML("<br><br><center> <h1>How to get started</h1> </center><br>"),
                                            shiny::HTML("<h3>The app consists of several tabs, each serving a distinct function:<br>
                                            1.	The initial tab, labeled Introduction, provides an introduction to the app, an overview of its available features, and information on how to use them.<br>
@@ -94,7 +108,7 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                            6.	We have also incorporated an important feature called the YOUR OWN PIPELINE tab, where users can input their preferred pipeline for fMRI data pre-processing and the associated options. The app then provides a count of the number of studies that have used the same pipeline and a list of these studies. Importantly, users can specify whether the order of their pipeline should be taken into account. If this option is disabled, the algorithm will count the number of papers that have employed the user-inputted pre-processing pipeline, regardless of the order.<br>
                                            7.	Finally, the last tab, labelled ABOUT, provides information about the project and the research team involved in this endeavour.</h3>")
                                     ),
-                                    column(1)
+                                    column(3)
                                   ),
                                   
                                   # BUTTONS TO START
@@ -132,31 +146,25 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                     tabPanel(
                                       "PRISMA diagram",
                                       shiny::HTML("<h1>PRISMA diagram</h1>"),
-                                      fluidRow(
-                                        column(8, # Display the first image and caption in a 6-column layout
-                                               shiny::HTML("<h3>Defining the space from general fMRI papers</h3>"),
-                                               img(src='prisma1.jpg', align = "center", width = "600px", height = "750px")
-                                        ),
-                                        column(4, # Display the second image and caption in a 6-column layout
-                                               shiny::HTML("<h3>Defining the forking paths of graph fMRI studies</h3>"),
-                                               img(src='prisma2.jpg', align = "center", width = "600px", height = "900px")
-                                        )
-                                      )
+                                      shiny::HTML("<h3>Defining the space from general fMRI papers</h3>"),
+                                      img(src='prisma1.jpg', align = "center", width = "400px", height = "500px"),
+                                      shiny::HTML("<h3>Defining the forking paths of graph fMRI studies</h3>"),
+                                      img(src='prisma2.jpg', align = "center", width = "400px", height = "600px")
                                     ),
                                     tabPanel(
                                       "List of papers",
                                       shiny::HTML("<h1>List of available papers for graph fMRI studies</h1>"),
-                                      DT::dataTableOutput("list_paper")
+                                      tableOutput("list_paper")
                                     ),
                                     tabPanel(
                                       "List of Steps",
                                       shiny::HTML("<h1>List of steps</h1>"),
-                                      DT::dataTableOutput("list_steps")
+                                      tableOutput("list_steps")
                                     ),
                                     tabPanel(
                                       "List of Options",
                                       shiny::HTML("<h1>List of options</h1>"),
-                                      DT::dataTableOutput("list_decisions")
+                                      tableOutput("list_decisions")
                                     )
                                     )
                                   )  # Closes the mainPanel
@@ -169,22 +177,31 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                   sidebarLayout( 
                                                     
                                                     sidebarPanel( width = 3,
-                                                                  shiny::HTML("<h5>Setting</h5>"),
-                                                                  selectInput("Node_WP",
-                                                                              label   = "Select the node you want to see the connection",
-                                                                              choices =  list('All' = list('All'),
-                                                                                              'Structural Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Structural_preprocessing'])),
-                                                                                              'Functional Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Functional_preprocessing'])),
-                                                                                              'Noise Removal' = (c(nodes$Names_vis[nodes$Groups=='Noise_removal'])),
-                                                                                              'FC Definition' = (c(nodes$Names_vis[nodes$Groups=='FC_def'])),
-                                                                                              'Graph Analysis' = (c(nodes$Names_vis[nodes$Groups=='Graph_analysis']))),
-                                                                              selected = "All"
-                                                                  ),
-                                                                  sliderInput("Thr", "Threshold paper",
-                                                                              min = 0, max = 99,
-                                                                              value = 0
-                                                                  ),
-                                                                  shiny::HTML("<h5>Information here</h5>"),
+                                                                  introjsUI(),
+                                                                  
+                                                                  useShinyjs(),
+                                                                  
+                                                                  tags$div(
+                                                                    style = "height:50px;",
+                                                                    introBox(
+                                                                      tags$div(
+                                                                        style = "height:30px;",
+                                                                        actionLink("settings", "Options", 
+                                                                                   icon = icon("sliders", class = "fa-2x"))),
+                                                                      data.step = 6,
+                                                                      data.intro = "Set your settings and preferences."
+                                                                    ),
+                                                                    selectInput("Node_WP",
+                                                                                label   = "Select the node you want to see the connection",
+                                                                                choices =  c("All", nodes$Names_vis),
+                                                                                selected = "All"
+                                                                    ),
+                                                                    sliderInput("Thr", "Threshold paper",
+                                                                                min = 0, max = 99,
+                                                                                value = 0
+                                                                    ),
+                                                                    
+                                                                  )
                                                     ),  # Closes sidebarPanel
                                                     mainPanel( width = 9,
                                                                forceNetworkOutput(outputId = "WP", width = "100%", height = "700px")
@@ -194,17 +211,26 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                 tabPanel(
                                                   "Combination",
                                                   sidebarPanel( width = 3,
-                                                                shiny::HTML("<h5>Setting</h5>"),
-                                                                selectInput("selectDecisionYN",
-                                                                            label   = "This option let you choose a step and visualize how other steps are being used together",
-                                                                            choices =  list('Structural Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Structural_preprocessing'])),
-                                                                                            'Functional Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Functional_preprocessing'])),
-                                                                                            'Noise Removal' = (c(nodes$Names_vis[nodes$Groups=='Noise_removal'])),
-                                                                                            'FC Definition' = (c(nodes$Names_vis[nodes$Groups=='FC_def'])),
-                                                                                            'Graph Analysis' = (c(nodes$Names_vis[nodes$Groups=='Graph_analysis']))),
-                                                                            selected = "Software"
-                                                                ),
-                                                                shiny::HTML("<h5>Information here</h5>"),
+                                                                introjsUI(),
+                                                                
+                                                                useShinyjs(),
+                                                                
+                                                                tags$div(
+                                                                  style = "height:70px;",
+                                                                  introBox(
+                                                                    tags$div(
+                                                                      style = "height:30px;",
+                                                                      actionLink("settings_fa", "Options", 
+                                                                                 icon = icon("sliders", class = "fa-2x"))),
+                                                                    data.step = 6,
+                                                                    data.intro = "Set your settings and preferences."
+                                                                  ),
+                                                                  selectInput("selectDecisionYN",
+                                                                              label   = "This option let you choose a step and visualize how other steps are being used together",
+                                                                              choices =  c(nodes$Names_vis),
+                                                                              selected = "Software"
+                                                                  )
+                                                                )
                                                   ),
                                                   mainPanel(
                                                     fluidRow(
@@ -218,19 +244,27 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                 tabPanel(
                                                   "Orders",
                                                   sidebarPanel( width = 3,
-                                                                shiny::HTML("<h5>Setting</h5>"),
-                                                                selectInput("selectDecisionOR",
-                                                                            label   = "This option let you choose a step and visualize how many papers used other steps after the selected steps",
-                                                                            choices =  list(
-                                                                                            'Structural Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Structural_preprocessing'])),
-                                                                                            'Functional Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Functional_preprocessing'])),
-                                                                                            'Noise Removal' = (c(nodes$Names_vis[nodes$Groups=='Noise_removal'])),
-                                                                                            'FC Definition' = (c(nodes$Names_vis[nodes$Groups=='FC_def'])),
-                                                                                            'Graph Analysis' = (c(nodes$Names_vis[nodes$Groups=='Graph_analysis']))),
-                                                                            selected = "Software"
-                                                                            
+                                                                introjsUI(),
+                                                                
+                                                                useShinyjs(),
+                                                                
+                                                                tags$div(
+                                                                  style = "height:70px;",
+                                                                  introBox(
+                                                                    tags$div(
+                                                                      style = "height:30px;",
+                                                                      actionLink("settings_fa", "Options", 
+                                                                                 icon = icon("sliders", class = "fa-2x"))),
+                                                                    data.step = 6,
+                                                                    data.intro = "Set your settings and preferences."
+                                                                  ),
+                                                                  selectInput("selectDecisionOR",
+                                                                              label   = "This option let you choose a step and visualize how many papers used other steps after the selected steps",
+                                                                              choices =  c(nodes$Names_vis),
+                                                                              selected = "Software"
+                                                                              
+                                                                  ),
                                                                 ),
-                                                                shiny::HTML("<h5>Information here</h5>"),
                                                   ),
                                                   mainPanel(
                                                     fluidRow(
@@ -245,26 +279,48 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                          ),  # Closes the second tabPanel called "Literature-based Analysis"
                          
                         
-                         tabPanel("Steps: Options", value = "fa",
+                         tabPanel("Options", value = "fa",
                                   sidebarPanel( width = 3,
-                                                shiny::HTML("<h5>Setting</h5>"),
-                                                selectInput("selectGroup",
-                                                            label   = "Which step you want to visualize the selected option distribution?",
-                                                            choices =  c(unique(nodes_op$Groups_vis)),
-                                                            selected = "Software"
-                                                ),
-                                                uiOutput("selectDecision"),
-                                                shiny::HTML("<h5>Information here</h5>"),
+                                                introjsUI(),
+                                                
+                                                useShinyjs(),
+                                                
+                                                tags$div(
+                                                  style = "height:50px;",
+                                                  introBox(
+                                                    tags$div(
+                                                      style = "height:30px;",
+                                                      actionLink("settings_fa", "Options", 
+                                                                 icon = icon("sliders", class = "fa-2x"))),
+                                                    data.step = 6,
+                                                    data.intro = "Set your settings and preferences."
+                                                  ),
+                                                  selectInput("selectGroup",
+                                                              label   = "Which step you want to visualize the selected option distribution?",
+                                                              choices =  c(unique(nodes_op$Groups_vis)),
+                                                              selected = "Software"
+                                                  ),
+                                                  uiOutput("selectDecision"),
+                                                )
                                   ),
                                   mainPanel( 
                                     fluidRow(
-                                      column(5, plotOutput("plot_group_decision", height = 600, width = "100%")),
-                                      column(7, textOutput("selected_decision")),
-                                      column(7, DT::dataTableOutput("table"))
+                                      column(3),
+                                      column(6, plotOutput("plot_group_decision", height = 600, width = "100%")),
+                                      column(3, br(),)
+                                    ),
+                                    
+                                    fluidRow(style = "height:100px;"),
+                                    fluidRow(
+                                      column(12, textOutput("selected_decision"))
+                                      
+                                    ),
+                                    fluidRow(
+                                      column(12, tableOutput("table"))
                                     ),
                                   ),
                                              
-                         ),
+                                    ),
                                                   
 
                          tabPanel("Individual Paper", value = "IP",
@@ -273,14 +329,27 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                   "Step Visualisation",sidebarLayout( 
                                                     
                                                     sidebarPanel( width = 3,
-                                                                  shiny::HTML("<h5>Setting</h5>"),
-                                                                  selectInput("selectPapers",
-                                                                              label   = "Choose paper",
-                                                                              choices =  c(dat$Key),
-                                                                              selected = "1"
-                                                                  ),
-                                                                  shiny::HTML("<h5>Information here</h5>"),
+                                                                  introjsUI(),
+                                                                  
+                                                                  useShinyjs(),
+                                                                  
+                                                                  tags$div(
+                                                                    style = "height:50px;",
+                                                                    introBox(
+                                                                      tags$div(
+                                                                        style = "height:30px;",
+                                                                        actionLink("settings", "Options", 
+                                                                                   icon = icon("sliders", class = "fa-2x"))),
+                                                                      data.step = 6,
+                                                                      data.intro = "Set your settings and preferences."
+                                                                    ),
+                                                                    selectInput("selectPapers",
+                                                                                label   = "Choose paper",
+                                                                                choices =  c(dat$Key),
+                                                                                selected = "1"
+                                                                    ),
                                                                     
+                                                                  )
                                                     ),  # Closes sidebarPanel
                                                     mainPanel( width = 8,
                                                                textOutput("selected_paper"),
@@ -293,13 +362,27 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                   sidebarLayout( 
                                                     
                                                     sidebarPanel( width = 3,
-                                                                  shiny::HTML("<h5>Setting</h5>"),
-                                                                  selectInput("selectPapers_cv",
-                                                                              label   = "Choose paper",
-                                                                              choices =  c(dat_op$Key),
-                                                                              selected = "1"
-                                                                  ),
-                                                                  shiny::HTML("<h5>Information here</h5>"),
+                                                                  introjsUI(),
+                                                                  
+                                                                  useShinyjs(),
+                                                                  
+                                                                  tags$div(
+                                                                    style = "height:50px;",
+                                                                    introBox(
+                                                                      tags$div(
+                                                                        style = "height:30px;",
+                                                                        actionLink("settings_cv", "Options", 
+                                                                                   icon = icon("sliders", class = "fa-2x"))),
+                                                                      data.step = 6,
+                                                                      data.intro = "Set your settings and preferences."
+                                                                    ),
+                                                                    selectInput("selectPapers_cv",
+                                                                                label   = "Choose paper",
+                                                                                choices =  c(dat_op$Key),
+                                                                                selected = "1"
+                                                                    ),
+                                                                    
+                                                                  )
                                                     ),  # Closes sidebarPanel
                                                     mainPanel( width = 8,
                                                                textOutput("selected_paper_cv"),
@@ -316,45 +399,52 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                   sidebarLayout(
 
                                     sidebarPanel( width = 3,
-                                                  shiny::HTML("<h5>Setting</h5>"),
-                                                  selectInput("selectStep_DIY",
-                                                              label   = "Select the step you want to include",
-                                                              choices =  list(
-                                                                              'Structural Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Structural_preprocessing'])),
-                                                                              'Functional Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Functional_preprocessing'])),
-                                                                              'Noise Removal' = (c(nodes$Names_vis[nodes$Groups=='Noise_removal'])),
-                                                                              'FC Definition' = (c(nodes$Names_vis[nodes$Groups=='FC_def'])),
-                                                                              'Graph Analysis' = (c(nodes$Names_vis[nodes$Groups=='Graph_analysis']))),
-                                                              selected = "Software"
-                                                  ),
-                                                  uiOutput("selectDecision_DIY"),
-                                                  actionButton("add", 
-                                                               label = "Add", 
-                                                               icon = icon("arrow-circle-right", class = "fa-2x"),
-                                                               width= "100px", height= "40px"
-                                                  ),
-                                                  actionButton("delete", 
-                                                               label = "Delete", 
-                                                               icon = icon("arrow-circle-left", class = "fa-2x"),
-                                                               width= "100px", height= "40px"
-                                                  ),
-                                                  shiny::HTML("<h6>Click this Order button if you want to take the order of the steps
-                                                              into consideration.</h6>"),
-                                                  materialSwitch(inputId = "order", 
-                                                                 label = "order", 
-                                                                 status = "success",
-                                                                 right = T,
-                                                                 value = T
-                                                  ),
-                                                  actionButton("count", 
-                                                               label = "Count", 
-                                                               icon = icon("arrow-circle-right", class = "fa-2x"),
-                                                               width= "100px", height= "40px"
-                                                  ),
-                                                  downloadButton('download',"Download the table",
+                                                  introjsUI(),
+
+                                                  useShinyjs(),
+
+                                                  tags$div(
+                                                    style = "height:50px;",
+                                                    introBox(
+                                                      tags$div(
+                                                        style = "height:30px;",
+                                                        actionLink("settings_DIY", "Options",
+                                                                   icon = icon("sliders", class = "fa-2x"))),
+                                                      data.step = 6,
+                                                      data.intro = "Set your settings and preferences."
+                                                    ),
+                                                    selectInput("selectStep_DIY",
+                                                                label   = "Select the step you want to include",
+                                                                choices =  c(nodes$Names_vis),
+                                                                selected = "Software"
+                                                    ),
+                                                    uiOutput("selectDecision_DIY"),
+                                                    actionButton("add", 
+                                                                 label = "Add", 
+                                                                 icon = icon("arrow-circle-right", class = "fa-2x"),
                                                                  width= "100px", height= "40px"
-                                                  ),
-                                                  shiny::HTML("<h5>Information here</h5>"),
+                                                    ),
+                                                    actionButton("delete", 
+                                                                 label = "Delete", 
+                                                                 icon = icon("arrow-circle-left", class = "fa-2x"),
+                                                                 width= "100px", height= "40px"
+                                                    ),
+                                                    shiny::HTML("<h6>Click this Order button if you want to take the order of the steps
+                                                                into consideration.</h6>"),
+                                                    materialSwitch(inputId = "order", 
+                                                                   label = "order", 
+                                                                   status = "success",
+                                                                   right = T
+                                                    ),
+                                                    actionButton("count", 
+                                                                 label = "Count", 
+                                                                 icon = icon("arrow-circle-right", class = "fa-2x"),
+                                                                 width= "100px", height= "40px"
+                                                    ),
+                                                    downloadButton('download',"Download the table",
+                                                                   width= "100px", height= "40px"
+                                                    ),
+                                                  )
                                                   
                                     ),  # Closes sidebarPanel
                                     mainPanel( 
@@ -373,6 +463,14 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                          ),
                          
                          tabPanel("ABOUT", value = "about",
+                                  
+                                  fluidRow(
+                                    shiny::HTML("<br><br><center> 
+                                            <h1>About METEOR</h1> 
+                                            </center>
+                                            <br>
+                                            <br>"),
+                                    style = "height:250px;"),
                                   fluidRow(
                                     div(align = "center",
                                         tags$span(h2("Brief Introduction"), 

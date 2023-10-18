@@ -14,9 +14,8 @@ library(qdapTools)
 library(RColorBrewer)
 library(tibble)
 library(htmlwidgets)
-library(ggtext)
 
-server <- function(input, output, session){
+server <- function(input, output){
   
   # Navbar ------------------------------------------------------------------
   shinyjs::addClass(id = "navBar", class = "navbar-right")
@@ -26,15 +25,6 @@ server <- function(input, output, session){
                              dom = 'tl'
   ))  # table and lengthMenu options
   
-  observe({
-    if (!is.null(input$selectA)) {
-      # Update choices for selectB based on the value of selectA
-      updateSelectInput(session, "selectB", choices = c("All Options", input$selectA))
-    } else {
-      # If selectA is not specified, provide all options for selectB
-      updateSelectInput(session, "selectB", choices = c("Option 1", "Option 2", "Option 3"))
-    }
-  })
   
   output$selected_paper <- renderText({ 
     sel_pap_st <- input$selectPapers
@@ -52,51 +42,9 @@ server <- function(input, output, session){
           "Publisher:", pap_cv$Publisher)
   })
   
-  output$list_paper <- DT::renderDataTable(
-    p_inf,
-    #extensions = "FixedHeader",
-    style="bootstrap",
-    options = list(
-      dom = 'Bfrtip',
-      pageLength = 20,
-      scrollX=TRUE,
-      autoWidth = TRUE,
-      paging=TRUE,
-      searching=FALSE,
-      ordering=TRUE
-      #fixedHeader = TRUE,
-    )
-  )
-  output$list_steps <- DT::renderDataTable(
-    steps,
-    #extensions = "FixedHeader",
-    style="bootstrap",
-    options = list(
-      dom = 'Bfrtip',
-      pageLength = 20,
-      scrollX=TRUE,
-      autoWidth = TRUE,
-      paging=TRUE,
-      searching=FALSE,
-      ordering=TRUE
-      #fixedHeader = TRUE,
-    )
-  )
-  output$list_decisions <- DT::renderDataTable(
-    steps_op,
-    #extensions = "FixedHeader",
-    style="bootstrap",
-    options = list(
-      dom = 'Bfrtip',
-      pageLength = 20,
-      scrollX=TRUE,
-      autoWidth = TRUE,
-      paging=TRUE,
-      searching=FALSE,
-      ordering=TRUE
-      #fixedHeader = TRUE,
-    )
-  )
+  output$list_paper <- renderTable(p_inf)
+  output$list_steps <- renderTable(steps)
+  output$list_decisions <- renderTable(steps_op)
   
   output$plot <- renderPlot(
     width = 1000, height = 800, res = 100,
@@ -144,7 +92,7 @@ server <- function(input, output, session){
   output$WP <- renderForceNetwork({
     thr <- input$Thr
     ndWP <- input$Node_WP
-    nodes2$size2 <- nodes2$size/(max(nodes2$size)/50)
+    nodes2$size2 <- nodes2$size/(max(nodes2$size)/28)
     links2$color <- "gray"
     links2$color[links2$value>5] <- "blue"
     links2$color[links2$value>20] <- "red"
@@ -178,7 +126,6 @@ server <- function(input, output, session){
     fn$x$nodes$Names <- nodes2$Names_vis
     fn$x$nodes$Definition <- nodes2$Definition
     fn$x$nodes$size <- nodes2$size
-    #radiusCalculation: "Math.sqrt(d.nodesize)+6"
     
     htmlwidgets::onRender(fn, jsCode = '
     function (el, x) {
@@ -196,6 +143,7 @@ server <- function(input, output, session){
           var options = { opacity: 1,
                           clickTextSize: 10,
                           opacityNoHover: 0.1,
+                          radiusCalculation: "Math.sqrt(d.nodesize)+6"
                         }
       
           var unfocusDivisor = 4;
@@ -212,6 +160,12 @@ server <- function(input, output, session){
             return linkedByIndex[a.index + "," + b.index];
           }
       
+          function nodeSize(d) {
+                  if(options.nodesize){
+                          return eval(options.radiusCalculation);
+                  }else{
+                          return 6}
+          }
       
           function mouseover(d) {
             var unfocusDivisor = 4;
@@ -222,6 +176,9 @@ server <- function(input, output, session){
             node.transition().duration(200)
               .style("opacity", function(o) { return d.index == o.index || neighboring(d, o) ? +options.opacity : +options.opacity / unfocusDivisor; });
       
+            d3.select(this).select("circle").transition()
+              .duration(750)
+              .attr("r", function(d){return nodeSize(d)+5;});
       
             node.select("text").transition()
               .duration(750)
@@ -235,6 +192,9 @@ server <- function(input, output, session){
             node.style("opacity", +options.opacity);
             link.style("opacity", +options.opacity);
       
+            d3.select(this).select("circle").transition()
+              .duration(750)
+              .attr("r", function(d){return nodeSize(d);});
             node.select("text").transition()
               .duration(1250)
               .attr("x", 0)
@@ -295,7 +255,7 @@ server <- function(input, output, session){
     })
   
   output$plot_group_decision <- renderPlot(
-    width = 450, height = 450, res = 100,
+    width = 600, height = 600, res = 100,
     {
       input$newplot
       gr_dec <- input$selectGroup
@@ -305,22 +265,19 @@ server <- function(input, output, session){
       gr_ds <- data.frame(gr_ds)
       gr_ds$name <- row.names(gr_ds)
       colnames(gr_ds) <- c("value", "name")
-      gr_ds$name <- fct_relevel(gr_ds$name, "Not_reported", "Not_used")
-      custom_colors <- c("Not_reported" = "red", "Not_used" = "blue")
       
       par(mar=c(10,4,4,1)+.1)
-      ggplot(gr_ds, aes(x = name, y = value)) +
-        geom_segment(aes(xend = name, yend = 0, color = name), size = 1) +
-        geom_point(aes(color = name), size = 4, alpha = 0.6) +
-        scale_color_manual(values = custom_colors, guide = "none") +  # Remove the legend
+      ggplot(gr_ds, aes(x=name, y=value)) +
+        geom_segment( aes(x=name, xend=name, y=0, yend=value), color="blue") +
+        geom_point( color="blue", size=4, alpha=0.6) +
         theme_light() +
         coord_flip() +
         theme(
           panel.grid.major.y = element_blank(),
           panel.border = element_blank(),
-          axis.ticks.y = element_blank(),
-          text = element_text(size = 12, family = "Arial")
+          axis.ticks.y = element_blank()
         ) +
+        theme(text=element_text(size=12,  family="Times New Roman")) +
         labs(x = "Options", y = "Number of papers")
       
     })
@@ -331,7 +288,7 @@ server <- function(input, output, session){
     opts_2 <- nodes_op[opts2, ]
     selectInput("selectDecision2",
                 label   = "Select the option",
-                choices =  c(opts_2$Names, "Not_used", "Not_reported"),
+                choices =  c(opts_2$Names),
                 selected = opts_2$Names[1]
     )
   })
@@ -339,43 +296,18 @@ server <- function(input, output, session){
   output$selected_decision <- renderText({
     dec <- input$selectDecision2
     id_dec <- which(dat_op == dec, arr.ind = T)
-    paste("You have selected option of", input$selectDecision2, "which was used by papers:")
+    paste("You have selected decision of", input$selectDecision2, "which was used by papers:")
   })
   
   
-  output$table <- DT::renderDataTable({
-    dec <- input$selectDecision2
-    dec1 <- input$selectGroup
-    dec1 <- nodes$Names[which(nodes$Names_vis == dec1)]
-    dat_op_or_sel <- dat_op_or[, dec1]
-    id_dec <- which(dat_op_or_sel == dec, arr.ind = TRUE)
-    new_tab <- p_inf[id_dec[, 1], ]
-    
-    datatable(new_tab,
-              options = list(
-                dom = 'Bfrtip',
-                pageLength = 20,
-                scrollX = TRUE,
-                autoWidth = TRUE,
-                paging = TRUE,
-                searching = FALSE,
-                ordering = TRUE
-                # fixedHeader = TRUE
-              )
-    )
-  })
   
-  
-  # output$table <- renderTable(
-  #   {
-  #     dec <- (input$selectDecision2)
-  #     dec1 <- input$selectGroup
-  #     dec1 <- nodes$Names[which(nodes$Names_vis==dec1)]
-  #     dat_op_or_sel <- dat_op_or[ ,dec1]
-  #     id_dec <- (which(dat_op_or_sel == dec, arr.ind = T))
-  #     new_tab <- (p_inf[id_dec[ ,1], ])
-  #     new_tab
-  #   })
+  output$table <- renderTable(
+    {
+      dec <- (input$selectDecision2)
+      id_dec <- (which(dat_op == dec, arr.ind = T))
+      new_tab <- (p_inf[id_dec[ ,1], ])
+      new_tab
+    })
   
   output$plot_YN <- renderPlot(
     width = 800, height = 800, res = 100,
@@ -386,35 +318,22 @@ server <- function(input, output, session){
       st_dat <- data.frame(st_dat)
       st_dat$name <- row.names(st_dat)
       colnames(st_dat) <- c("value", "name")
-      st_dat$Groups <- nodes$Groups
-      st_dat$Groups <- factor(st_dat$Groups, levels = unique(st_dat$Groups))
-      st_dat$col <- nodes$col
       st_dat <- st_dat %>%
         mutate(Names_or = fct_reorder(name, desc(nodes$ID)))
-      label_colors <- ifelse(st_dat$Names_or == st_sel, "red", "black")
-      names(label_colors) <- st_dat$Names_or
       par(mar=c(10,4,4,1)+.1)
-
-      # Create the ggplot
-      ggplot(st_dat, aes(x = Names_or, y = value, color = Groups)) +
-        geom_segment(aes(xend = Names_or, yend = 0), size = 1) +
-        geom_point(size = 4, alpha = 0.6) +
-        scale_color_manual(values = unique(st_dat$col)) +
-        #scale_y_discrete(labels = st_dat$Names_or, breaks = st_dat$Names_or, limits = st_dat$Names_or) +
+      ggplot(st_dat, aes(x=Names_or, y=value)) +
+        geom_segment( aes(x=Names_or, xend=Names_or, y=0, yend=value), color=nodes$col) +
+        geom_point( color=nodes$col, size=4, alpha=0.6) +
         theme_light() +
+        coord_flip() +
         theme(
           panel.grid.major.y = element_blank(),
           panel.border = element_blank(),
-          axis.ticks.y = element_blank(),
-          text = element_text(size = 12, family = "Arial"),
-          axis.text.y = element_text(color = label_colors[st_dat$Names_or]),
+          axis.ticks.y = element_blank()
         ) +
-        coord_flip() +
-        labs(
-          x = "Steps",
-          y = paste("Number of papers used it together with", st_sel),
-          color = "Groups"
-        )
+        theme(text=element_text(size=12,  family="Times New Roman")) +
+        labs(x = "Steps", y = paste("Number of papers used it together with", st_sel))
+     
     })
   
   output$plot_OR <- renderPlot(
@@ -426,33 +345,21 @@ server <- function(input, output, session){
       st_dat_OR <- data.frame(st_dat_OR)
       st_dat_OR$name <- row.names(st_dat_OR)
       colnames(st_dat_OR) <- c("value", "name")
-      st_dat_OR$Groups <- nodes$Groups
-      st_dat_OR$Groups <- factor(st_dat_OR$Groups, levels = unique(st_dat_OR$Groups))
-      st_dat_OR$col <- nodes$col
       st_dat_OR <- st_dat_OR %>%
         mutate(Names_or = fct_reorder(name, desc(nodes$ID)))
-      label_colors <- ifelse(st_dat_OR$Names_or == st_sel_OR, "red", "black")
-      names(label_colors) <- st_dat_OR$Names_or
       par(mar=c(10,4,4,1)+.1)
-      ggplot(st_dat_OR, aes(x = Names_or, y = value, color = Groups)) +
-        geom_segment(aes(xend = Names_or, yend = 0), size = 1) +
-        geom_point(size = 4, alpha = 0.6) +
-        scale_color_manual(values = unique(st_dat_OR$col)) +
-        #scale_y_discrete(labels = st_dat_OR$Names_or, breaks = st_dat_OR$Names_or, limits = st_dat_OR$Names_or) +
+      ggplot(st_dat_OR, aes(x=Names_or, y=value)) +
+        geom_segment( aes(x=Names_or, xend=Names_or, y=0, yend=value), color=nodes$col) +
+        geom_point( color=nodes$col, size=4, alpha=0.6) +
         theme_light() +
         coord_flip() +
         theme(
           panel.grid.major.y = element_blank(),
           panel.border = element_blank(),
-          axis.ticks.y = element_blank(),
-          text = element_text(size = 12, family = "Arial"),
-          axis.text.y = element_text(color = label_colors[st_dat_OR$Names_or]),
+          axis.ticks.y = element_blank()
         ) +
-        labs(
-          x = "Steps",
-          y = paste("Number of papers used it after", st_sel_OR),
-          color = "Groups"
-        )
+        theme(text=element_text(size=12,  family="Times New Roman")) +
+        labs(x = "Steps", y = paste("Number of papers used it after", st_sel_OR))
     })
   
   output$selectDecision_DIY <- renderUI({
@@ -482,21 +389,12 @@ server <- function(input, output, session){
     
   })
   
-  observeEvent(input$delete,{
+  observeEvent(input$delete, {
     
-    if (!is.null(input$table_DIY_rows_selected)) {
-      
-      tableValues$m  <- tableValues$m [-as.numeric(input$table_DIY_rows_selected),]
-    }
+    tableValues$m <- head(tableValues$m,-1)
+    
   })
   
-  
-  # observeEvent(input$delete, {
-  #   
-  #   tableValues$m <- head(tableValues$m,-1)
-  #   
-  # })
-  # 
   observeEvent(input$count, {
     
     table_DIY <- tableValues$m
@@ -571,6 +469,58 @@ server <- function(input, output, session){
       write.csv(table_data, fname)
     }
   )
+  
+  
+  # # Show/Hide Settings -----------------------------------------------------------------
+  # # Hide settings at start of new Shiny session
+  # observe(c(hide("selectModalities"),
+  #           hide("selectPapers"),
+  #           hide("selectModalities_cv"),
+  #           hide("selectPapers_cv"),
+  #           hide("selectModalities_fa"),
+  #           hide("selectDecision"),
+  #           hide("selectGroup"),
+  #           hide("selectDecisionYN"),
+  #           hide("selectDecisionOR"),
+  #           hide("selectModalities_DIY"),
+  #           hide("selectStep_DIY"),
+  #           hide("selectDecision_DIY"),
+  #           hide("add"),
+  #           hide("delete"),
+  #           hide("order"),
+  #           hide("count"),
+  #           hide("download")
+  # ))
+  # 
+  # # Toggle visibility of settings
+  # observeEvent(input$settings, {
+  #   shinyjs::toggle("selectModalities", anim = TRUE)
+  #   shinyjs::toggle("selectPapers", anim = TRUE)# toggle is a shinyjs function
+  # })
+  # 
+  # observeEvent(input$settings_cv, {
+  #   shinyjs::toggle("selectModalities_cv", anim = TRUE)
+  #   shinyjs::toggle("selectPapers_cv", anim = TRUE)# toggle is a shinyjs function
+  # })
+  # 
+  # observeEvent(input$settings_fa, {
+  #   shinyjs::toggle("selectModalities_fa", anim = TRUE)
+  #   shinyjs::toggle("selectDecision", anim = TRUE)
+  #   shinyjs::toggle("selectGroup", anim = TRUE)
+  #   shinyjs::toggle("selectDecisionYN", anim = TRUE)
+  #   shinyjs::toggle("selectDecisionOR", anim = TRUE)# toggle is a shinyjs function
+  # })
+  # 
+  # observeEvent(input$settings_DIY, {
+  #   shinyjs::toggle("selectModalities_DIY", anim = TRUE)
+  #   shinyjs::toggle("selectStep_DIY", anim = TRUE)
+  #   shinyjs::toggle("add", anim = TRUE)
+  #   shinyjs::toggle("delete", anim = TRUE)
+  #   shinyjs::toggle("count", anim = TRUE)
+  #   shinyjs::toggle("download", anim = TRUE)
+  #   shinyjs::toggle("order", anim = TRUE)
+  #   shinyjs::toggle("selectDecision_DIY", anim = TRUE)# toggle is a shinyjs function
+  # })
   
   
 }
