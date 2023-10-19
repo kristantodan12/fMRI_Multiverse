@@ -5,9 +5,9 @@ account: meteor-oldenburg
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 9622634
-bundleId: 7808582
+bundleId: 7823617
 url: https://meteor-oldenburg.shinyapps.io/ShinyDev/
 version: 1
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: Analysis.R|LICENSE|README.md
+ignoredFiles: .RData|Analysis.R|LICENSE|README.md

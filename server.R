@@ -523,13 +523,14 @@ server <- function(input, output, session){
   })
   
   observeEvent(input$delete,{
+    selected_row <- input$table_DIY_rows_selected
     temp <- tableValues$m
     
-    if (!is.null(input$table_DIY_rows_selected)) {
+    if (length(selected_row) == 0) {
+      temp <- head(temp,-1)
       
-      temp  <- temp [-as.numeric(input$table_DIY_rows_selected),]
     } else {
-      temp <- head(temp$m,-1)
+      temp  <- temp [-as.numeric(input$table_DIY_rows_selected),]
     }
     rownames(temp) <- NULL
     tableValues$m <- temp
