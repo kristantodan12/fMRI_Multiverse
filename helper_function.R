@@ -36,9 +36,30 @@ steps_op <- read_excel("Database.xlsx", sheet = "All_options")
 p_inf <- read_excel("Database.xlsx", sheet = "Paper_info")
 as.integer(p_inf$Key)
 as.integer(p_inf$Year)
-
 cn_p_inf <- colnames(p_inf)
 
+#dat with name visual
+replace_names <- function(x) {
+  mapping <- setNames(steps$Names_vis, steps$Names)
+  return(mapping[x])
+}
+dat_vis <- data.frame(lapply(dat, replace_names))
+dat_vis$Key <- dat$Key
+
+replace_column_names <- function(x) {
+  mapping <- setNames(steps$Names_vis, steps$Names)
+  new_names <- sapply(names(x), function(col_name) {
+    if (col_name %in% names(mapping)) {
+      return(mapping[col_name])
+    } else {
+      return(col_name)
+    }
+  })
+  names(x) <- new_names
+  return(x)
+}
+
+dat_op_or_vis <- replace_column_names(dat_op_or)
 
 #############################
 #########WholePipe###########

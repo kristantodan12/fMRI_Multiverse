@@ -141,6 +141,26 @@ server <- function(input, output, session){
       
     })
   
+  output$table_step <- DT::renderDataTable({
+    sel_p <- input$selectPapers
+    pipes_p <- dat_vis[which(dat_vis$Key == sel_p), ]
+    pipes_p <- pipes_p %>%
+      select(where(~ all(!is.na(.))))
+    datatable(pipes_p,
+              options = list(
+                dom = 'Bfrtip',
+                pageLength = 1,
+                scrollX = TRUE,
+                autoWidth = TRUE,
+                paging = TRUE,
+                searching = FALSE,
+                ordering = TRUE
+                # fixedHeader = TRUE
+              )
+    )
+  })
+  
+  
   output$WP <- renderForceNetwork({
     thr <- input$Thr
     ndWP <- input$Node_WP
@@ -294,6 +314,26 @@ server <- function(input, output, session){
       
     })
   
+  
+  output$table_option <- DT::renderDataTable({
+    sel_p_op <- input$selectPapers_cv
+    pipes_p_op <- dat_op_or_vis[which(dat_op_or_vis$Key == sel_p_op), ]
+    pipes_p_op <- pipes_p_op %>%
+      select(where(~ all(!is.na(.))))
+    datatable(pipes_p_op,
+              options = list(
+                dom = 'Bfrtip',
+                pageLength = 1,
+                scrollX = TRUE,
+                autoWidth = TRUE,
+                paging = TRUE,
+                searching = FALSE,
+                ordering = TRUE
+                # fixedHeader = TRUE
+              )
+    )
+  })
+  
   output$plot_group_decision <- renderPlot(
     width = 450, height = 450, res = 100,
     {
@@ -354,28 +394,20 @@ server <- function(input, output, session){
     datatable(new_tab,
               options = list(
                 dom = 'Bfrtip',
-                pageLength = 20,
+                pageLength = 10,
                 scrollX = TRUE,
                 autoWidth = TRUE,
                 paging = TRUE,
                 searching = FALSE,
-                ordering = TRUE
+                ordering = TRUE,
+                columnDefs = list(
+                  list(width = '300px', targets = c(2,3))
+                )
                 # fixedHeader = TRUE
               )
     )
   })
   
-  
-  # output$table <- renderTable(
-  #   {
-  #     dec <- (input$selectDecision2)
-  #     dec1 <- input$selectGroup
-  #     dec1 <- nodes$Names[which(nodes$Names_vis==dec1)]
-  #     dat_op_or_sel <- dat_op_or[ ,dec1]
-  #     id_dec <- (which(dat_op_or_sel == dec, arr.ind = T))
-  #     new_tab <- (p_inf[id_dec[ ,1], ])
-  #     new_tab
-  #   })
   
   output$plot_YN <- renderPlot(
     width = 800, height = 800, res = 100,
@@ -472,31 +504,38 @@ server <- function(input, output, session){
   
   
   observeEvent(input$add, {
-    
+    selected_row <- input$table_DIY_rows_selected
     temp <- tableValues$m
-    
-    newRow <- data.frame(Names = input$selectStep_DIY, Options = input$selectDecision_DIY2, 
-                         check.names = FALSE)
-    temp <- rbind(temp, newRow)
+    if (length(selected_row) == 0) {
+      # If no row is selected, append the new row to the end
+      newRow <- data.frame(Names = input$selectStep_DIY, Options = input$selectDecision_DIY2, 
+                           check.names = FALSE)
+      temp <- rbind(temp, newRow)
+    } else {
+      # If a row is selected, insert the new row after the selected row
+      newRow <- data.frame(Names = input$selectStep_DIY, Options = input$selectDecision_DIY2, 
+                           check.names = FALSE)
+      temp <- rbind(temp[1:selected_row, ], newRow, temp[(selected_row + 1):nrow(temp), ])
+    }
+    rownames(temp) <- NULL
     tableValues$m <- temp
     
   })
   
   observeEvent(input$delete,{
+    temp <- tableValues$m
     
     if (!is.null(input$table_DIY_rows_selected)) {
       
-      tableValues$m  <- tableValues$m [-as.numeric(input$table_DIY_rows_selected),]
+      temp  <- temp [-as.numeric(input$table_DIY_rows_selected),]
+    } else {
+      temp <- head(temp$m,-1)
     }
+    rownames(temp) <- NULL
+    tableValues$m <- temp
   })
   
   
-  # observeEvent(input$delete, {
-  #   
-  #   tableValues$m <- head(tableValues$m,-1)
-  #   
-  # })
-  # 
   observeEvent(input$count, {
     
     table_DIY <- tableValues$m
@@ -548,11 +587,28 @@ server <- function(input, output, session){
       paste(c("Your selected pipeline is used by", count, "papers:"), collapse = " ")
     })
     
-    output$table_DIY2 <- renderTable({
+    output$table_DIY2 <- DT::renderDataTable({
       table_DIYfin <- p_inf[row_finDIY, ]
-      table_DIYfin
+      datatable(table_DIYfin,
+                options = list(
+                  dom = 'Bfrtip',
+                  pageLength = 20,
+                  scrollX = TRUE,
+                  autoWidth = TRUE,
+                  paging = TRUE,
+                  searching = FALSE,
+                  ordering = TRUE
+                  # fixedHeader = TRUE
+      ))
     })
+    
+    # output$table_DIY2 <- renderTable({
+    #   table_DIYfin <- p_inf[row_finDIY, ]
+    #   table_DIYfin
+    # })
   })
+  
+
   
   output$table_DIY <- DT::renderDataTable({
     table_data <- tableValues$m

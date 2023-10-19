@@ -280,10 +280,11 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                                               selected = "1"
                                                                   ),
                                                                   shiny::HTML("<h5>Information here</h5>"),
-                                                                    
+                                                                  
                                                     ),  # Closes sidebarPanel
                                                     mainPanel( width = 8,
                                                                textOutput("selected_paper"),
+                                                               DT::dataTableOutput("table_step"),
                                                                plotOutput("plot", width = "100%")
                                                     )  # Closes the mainPanel
                                                   )
@@ -300,9 +301,11 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                                               selected = "1"
                                                                   ),
                                                                   shiny::HTML("<h5>Information here</h5>"),
+                                                                  
                                                     ),  # Closes sidebarPanel
                                                     mainPanel( width = 8,
                                                                textOutput("selected_paper_cv"),
+                                                               DT::dataTableOutput("table_option"),
                                                                plotOutput("plot_cv", width = "100%")
                                                     )  # Closes the mainPanel
                                                   )  # Closes the sidebarLayout
@@ -364,10 +367,7 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                         column(12, textOutput("counted_paper"))
                                         
                                       ),
-                                      fluidRow(
-                                        column(12, tableOutput("table_DIY2"))
-                                      )
-                                      #plotOutput("plot_DIY", width = "100%")
+                                      DT::DTOutput("table_DIY2"),
                                     )  # Closes the mainPanel
                                   )  # Closes the sidebarLayout
                          ),

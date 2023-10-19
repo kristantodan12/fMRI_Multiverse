@@ -1,0 +1,13 @@
+name: ShinyDev
+title: ShinyDev
+username: meteor-oldenburg
+account: meteor-oldenburg
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 9622634
+bundleId: 7808582
+url: https://meteor-oldenburg.shinyapps.io/ShinyDev/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: Analysis.R|LICENSE|README.md
