@@ -185,7 +185,7 @@ server <- function(input, output, session){
     }
     
     script <- 'alert("Name: " + d.Names + "\\n" +
-              "Definiton: " + d.Definition + "\\n" + "Used by: " + d.size + "papers");'
+              "Definiton: " + d.Definition + "\\n" + "Used by: " + d.size + "papers out of 220 papers");'
     
     fn = forceNetwork(Links = links_vis, Nodes = nodes2,
                  Source = "source", Target = "target",
@@ -352,6 +352,7 @@ server <- function(input, output, session){
       ggplot(gr_ds, aes(x = name, y = value)) +
         geom_segment(aes(xend = name, yend = 0, color = name), size = 1) +
         geom_point(aes(color = name), size = 4, alpha = 0.6) +
+        geom_text(aes(label = value), vjust = 0.5, hjust = 0.2, size = 4, color = "black") +
         scale_color_manual(values = custom_colors, guide = "none") +  # Remove the legend
         theme_light() +
         coord_flip() +
@@ -361,7 +362,7 @@ server <- function(input, output, session){
           axis.ticks.y = element_blank(),
           text = element_text(size = 12, family = "Arial")
         ) +
-        labs(x = "Options", y = "Number of papers")
+        labs(x = "Options", y = "Number of papers (out of 220 papers)")
       
     })
   
@@ -431,6 +432,7 @@ server <- function(input, output, session){
       ggplot(st_dat, aes(x = Names_or, y = value, color = Groups)) +
         geom_segment(aes(xend = Names_or, yend = 0), size = 1) +
         geom_point(size = 4, alpha = 0.6) +
+        geom_text(aes(label = value), vjust = 0.5, hjust = 0.2, size = 4, color = "black") +
         scale_color_manual(values = unique(st_dat$col)) +
         #scale_y_discrete(labels = st_dat$Names_or, breaks = st_dat$Names_or, limits = st_dat$Names_or) +
         theme_light() +
@@ -444,7 +446,7 @@ server <- function(input, output, session){
         coord_flip() +
         labs(
           x = "Steps",
-          y = paste("Number of papers used it together with", st_sel),
+          y = paste("Number of papers (out of 220 papers) used it together with", st_sel),
           color = "Groups"
         )
     })
@@ -469,6 +471,7 @@ server <- function(input, output, session){
       ggplot(st_dat_OR, aes(x = Names_or, y = value, color = Groups)) +
         geom_segment(aes(xend = Names_or, yend = 0), size = 1) +
         geom_point(size = 4, alpha = 0.6) +
+        geom_text(aes(label = value), vjust = 0.5, hjust = 0.2, size = 4, color = "black") +
         scale_color_manual(values = unique(st_dat_OR$col)) +
         #scale_y_discrete(labels = st_dat_OR$Names_or, breaks = st_dat_OR$Names_or, limits = st_dat_OR$Names_or) +
         theme_light() +
@@ -482,7 +485,7 @@ server <- function(input, output, session){
         ) +
         labs(
           x = "Steps",
-          y = paste("Number of papers used it after", st_sel_OR),
+          y = paste("Number of papers (out of 220 papers) used it after", st_sel_OR),
           color = "Groups"
         )
     })
@@ -585,7 +588,7 @@ server <- function(input, output, session){
     count <- length(row_finDIY)
     
     output$counted_paper <- renderText({
-      paste(c("Your selected pipeline is used by", count, "papers:"), collapse = " ")
+      paste(c("Your selected pipeline is used by", count, "papers (out of 220 papers):"), collapse = " ")
     })
     
     output$table_DIY2 <- DT::renderDataTable({
