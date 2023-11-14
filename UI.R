@@ -133,34 +133,50 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                       "PRISMA diagram",
                                       shiny::HTML("<h1>PRISMA diagram</h1>"),
                                       fluidRow(
-                                        column(8, # Display the first image and caption in a 6-column layout
-                                               shiny::HTML("<h3>Defining the space from general fMRI papers</h3>"),
-                                               img(src='prisma1.jpg', align = "center", width = "600px", height = "750px")
+                                        column(4, 
+                                               shiny::HTML("<h5><b>Literature review of articles related to graph fMRI studies.</b></h5> 
+                                                  <b>Literature search:</b>Three databases were searched: Scopus, Web of Science, 
+                                                  and PubMed for publications containing the terms related to fMRI, graph theory, and cognitive abilities <br><br> 
+                                                  <b>Study inclusion:</b> We only included empirical studies which report
+                                                  the preprocessing steps and deal with healthy subjects. Details can be found in the Preferred Reporting 
+                                                  Items for Systematic Reviews and Meta-Analyses (PRISMA) flowchart on the right. <br><br>
+                                                  <b>Data extraction:</b> All data was coded by one coder. Other two coders coded the data
+                                                  independently for 25 articles each. The codes were then compared and the discrepancies were discussed.
+                                                  Information on the pre-processing steps and 
+                                                  their respective options were extracted. <br><br></h5>"),
                                         ),
-                                        column(4, # Display the second image and caption in a 6-column layout
+                                        column(8, # Display the first image and caption in a 4-column layout
+                                               shiny::HTML("<h3>Defining the space from general fMRI papers</h3>"),
+                                               img(src='prisma1.jpg', align = "center", width = "600px", height = "750px"),
                                                shiny::HTML("<h3>Defining the forking paths of graph fMRI studies</h3>"),
                                                img(src='prisma2.jpg', align = "center", width = "600px", height = "900px")
-                                        )
+                                        ),
+                                        # column(4, # Display the second image and caption in a 4-column layout
+                                        #        shiny::HTML("<h3>Defining the forking paths of graph fMRI studies</h3>"),
+                                        #        img(src='prisma2.jpg', align = "center", width = "600px", height = "900px")
+                                        # )
                                       )
                                     ),
                                     tabPanel(
-                                      "List of papers",
-                                      shiny::HTML("<h1>List of available papers for graph fMRI studies</h1>"),
+                                      "List of Included Articles",
+                                      shiny::HTML("<h5><b>List of included articles for graph fMRI studies</b></h5>"),
                                       DT::dataTableOutput("list_paper")
                                     ),
                                     tabPanel(
                                       "List of Steps",
-                                      shiny::HTML("<h1>List of steps</h1>"),
+                                      shiny::HTML("<h5><b>List of identified steps</b></h5>"),
                                       DT::dataTableOutput("list_steps")
                                     ),
                                     tabPanel(
                                       "List of Options",
-                                      shiny::HTML("<h1>List of options</h1>"),
+                                      shiny::HTML("<h5><b>List of identified options</b></h5>"),
                                       DT::dataTableOutput("list_decisions")
                                     )
                                     )
                                   )  # Closes the mainPanel
                          ),  # Closes the second tabPanel called "Literature-based Analysis"
+                         
+                         
                          
                          tabPanel("Steps", value = "WH",
                                     tabsetPanel(type = "tabs",
@@ -169,9 +185,25 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                   sidebarLayout( 
                                                     
                                                     sidebarPanel( width = 3,
-                                                                  shiny::HTML("<h5>Setting</h5>"),
+                                                                  shiny::HTML("<h5><b>Explore the aggregated preprocessing 
+                                                                       pipelines of all articles in a network fashion.</b><br><br>
+                                                                       Each node (circle) represents a pre-processing step. The 
+                                                                       color of a node indicates the processing group the step 
+                                                                       belongs to. <br><br>
+                                                                       Steps performed in succession are connected by arrows, 
+                                                                       these are edges. The wider the arrow, the higher the number
+                                                                       of papers using this edge. The arrow points in the direction 
+                                                                       of the step that is performed afterward. <br><br>
+                                                                       By hovering over a node you can get its name. If you click 
+                                                                       on it you get its definition and by how many articles it was 
+                                                                       used. By hovering over an edge you can get how many
+                                                                       articles used it. <br><br>
+                                                                       To identify edges of a specific preprocessing step, please 
+                                                                       select it in the dropdown below. If you choose all, you will 
+                                                                       see edges of all preprocessing steps.<br><br>"
+                                                                  ),
                                                                   selectInput("Node_WP",
-                                                                              label   = "Select the node you want to see the connection",
+                                                                              label   = "Explore edges of step:",
                                                                               choices =  list('All' = list('All'),
                                                                                               'Structural Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Structural_preprocessing'])),
                                                                                               'Functional Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Functional_preprocessing'])),
@@ -184,7 +216,7 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                                               min = 0, max = 99,
                                                                               value = 0
                                                                   ),
-                                                                  shiny::HTML("<h5>Information here</h5>"),
+                                                                  shiny::HTML("<h5>Move the threshold to only see edges used by more papers than the threshold.</h5>"),
                                                     ),  # Closes sidebarPanel
                                                     mainPanel( width = 9,
                                                                forceNetworkOutput(outputId = "WP", width = "100%", height = "700px")
@@ -194,9 +226,12 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                 tabPanel(
                                                   "Combination",
                                                   sidebarPanel( width = 3,
-                                                                shiny::HTML("<h5>Setting</h5>"),
+                                                                shiny::HTML("<h5><b>Explore pairs of pre-processing steps used in 
+                                                                combination. </b><br><br>
+                                                                Select a step from the dropdown below to see which steps were are 
+                                                                used in conjunction with this step. <br><br></h5>"),
                                                                 selectInput("selectDecisionYN",
-                                                                            label   = "This option let you choose a step and visualize how other steps are being used together",
+                                                                            label   = "Explore combinations of step:",
                                                                             choices =  list('Structural Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Structural_preprocessing'])),
                                                                                             'Functional Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Functional_preprocessing'])),
                                                                                             'Noise Removal' = (c(nodes$Names_vis[nodes$Groups=='Noise_removal'])),
@@ -204,7 +239,9 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                                                             'Graph Analysis' = (c(nodes$Names_vis[nodes$Groups=='Graph_analysis']))),
                                                                             selected = "Software"
                                                                 ),
-                                                                shiny::HTML("<h5>Information here</h5>"),
+                                                                shiny::HTML("<h5>Lollipop plot of the number of pre-processing steps use together with 
+                                                              the step selected above. Selected step in red font. Color 
+                                                                          indicates the pre-processing group.</h5>"),
                                                   ),
                                                   mainPanel(
                                                     fluidRow(
@@ -218,9 +255,11 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                 tabPanel(
                                                   "Orders",
                                                   sidebarPanel( width = 3,
-                                                                shiny::HTML("<h5>Setting</h5>"),
+                                                                shiny::HTML("<h5><b>Investigate the order of pre-processing steps.</b><br><br>
+                                                                Select a preprocessing step from the dropdown below to see which 
+                                                                preprocessing steps were performed AFTER the selected one.<br><br></h5>"),
                                                                 selectInput("selectDecisionOR",
-                                                                            label   = "This option let you choose a step and visualize how many papers used other steps after the selected steps",
+                                                                            label   = "Explore steps performed after step:",
                                                                             choices =  list(
                                                                                             'Structural Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Structural_preprocessing'])),
                                                                                             'Functional Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Functional_preprocessing'])),
@@ -230,7 +269,9 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                                             selected = "Software"
                                                                             
                                                                 ),
-                                                                shiny::HTML("<h5>Information here</h5>"),
+                                                                shiny::HTML("<h5>Lollipop plot of the number of processing steps 
+                                                                          used after the selected step. Selected step in red font. 
+                                                                          Color indicates the preprocessing group.</h5>"),
                                                   ),
                                                   mainPanel(
                                                     fluidRow(
@@ -247,14 +288,16 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                         
                          tabPanel("Steps: Options", value = "fa",
                                   sidebarPanel( width = 3,
-                                                shiny::HTML("<h5>Setting</h5>"),
+                                                shiny::HTML("<h5><b>Explore the distribution of options chosen by
+                                                                     different articles.</b><br></h5>"),
                                                 selectInput("selectGroup",
-                                                            label   = "Which step you want to visualize the selected option distribution?",
+                                                            label   = "Explore the chosen options of step:",
                                                             choices =  c(unique(nodes_op$Groups_vis)),
                                                             selected = "Software"
                                                 ),
+                                                shiny::HTML("<h5>Lollipop plot of the number of articles using
+                                                         various options of the selected step.</h5>"),
                                                 uiOutput("selectDecision"),
-                                                shiny::HTML("<h5>Information here</h5>"),
                                   ),
                                   mainPanel( 
                                     fluidRow(
@@ -273,13 +316,17 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                   "Step Visualisation",sidebarLayout( 
                                                     
                                                     sidebarPanel( width = 3,
-                                                                  shiny::HTML("<h5>Setting</h5>"),
+                                                                  shiny::HTML("<h5><b>Visualize the pre-processing steps taken by a 
+                                                                  specific article.</b><br><br>
+                                                                  Select the code of the article in the dropdown below to get 
+                                                                  a visualization of the pre-processing steps and to generate a 
+                                                                  table of the pre-procesing steps. You can 
+                                                                  find the code of each study in the Database tab.<br></h5>"),
                                                                   selectInput("selectPapers",
-                                                                              label   = "Choose paper",
+                                                                              label   = "Select article:",
                                                                               choices =  c(dat$Key),
                                                                               selected = "1"
                                                                   ),
-                                                                  shiny::HTML("<h5>Information here</h5>"),
                                                                   
                                                     ),  # Closes sidebarPanel
                                                     mainPanel( width = 8,
@@ -294,13 +341,17 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                   sidebarLayout( 
                                                     
                                                     sidebarPanel( width = 3,
-                                                                  shiny::HTML("<h5>Setting</h5>"),
+                                                                  shiny::HTML("<h5><b>Visualize the options of pre-processing steps taken by a 
+                                                                  specific article.</b><br><br>
+                                                                  Select the code of the article in the dropdown below to get 
+                                                                  a visualization of the options of the pre-processing steps and to generate a 
+                                                                  table of the options. You can 
+                                                                  find the code of each study in the Database tab.<br></h5>"),
                                                                   selectInput("selectPapers_cv",
-                                                                              label   = "Choose paper",
+                                                                              label   = "Select article:",
                                                                               choices =  c(dat_op$Key),
                                                                               selected = "1"
                                                                   ),
-                                                                  shiny::HTML("<h5>Information here</h5>"),
                                                                   
                                                     ),  # Closes sidebarPanel
                                                     mainPanel( width = 8,
@@ -319,7 +370,16 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                   sidebarLayout(
 
                                     sidebarPanel( width = 3,
-                                                  shiny::HTML("<h5>Setting</h5>"),
+                                                  shiny::HTML("<h5><b>Construct your preferred pipeline for fMRI data 
+                                                  pre-processing</b><br><br>
+                                                  Select the step you want to include with the dropdown below. You may also 
+                                                  select a specific option or any of the available ones. You can add and 
+                                                  delete steps with the respective buttons. <br><br>
+                                                  You can count the number of studies that have used the same pipeline and 
+                                                  obtain a table by clicking count. You may specify whether the order of 
+                                                  their pipeline should be considered. If this option is disabled, the a
+                                                  lgorithm will identify all articles that have employed the selected steps 
+                                                  regardless of the order. <br></h5>"),
                                                   selectInput("selectStep_DIY",
                                                               label   = "Select the step you want to include",
                                                               choices =  list(
@@ -341,8 +401,8 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                                icon = icon("arrow-circle-left", class = "fa-2x"),
                                                                width= "100px", height= "40px"
                                                   ),
-                                                  shiny::HTML("<h6>Click this Order button if you want to take the order of the steps
-                                                              into consideration.</h6>"),
+                                                  shiny::HTML("<h6>Click this Order button if you want to take the order 
+                                                  of the steps into consideration.</h6>"),
                                                   materialSwitch(inputId = "order", 
                                                                  label = "order", 
                                                                  status = "success",
@@ -372,36 +432,18 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                   )  # Closes the sidebarLayout
                          ),
                          
-                         tabPanel("ABOUT", value = "about",
-                                  fluidRow(
-                                    div(align = "center",
-                                        tags$span(h2("Brief Introduction"), 
-                                                  style = "font-weight:bold"
-                                        ))
-                                  ),
-                                  fluidRow(
-                                    column(3),
-                                    column(6,
-                                           tags$ul(
-                                             tags$li(h4("METEOR project is funded by priority program META-REP (SPP 2317).")), 
-                                             tags$li(h4("The main aim of the program is to Analyse and Optimise Replicability in the Behavioral, Social, and Cognitive Sciences.")), 
-                                             tags$li(h4("The program involves 15 individual projects with 50+ scholars.")),
-                                             tags$li(h4("METEOR is based in the University of Oldenburg."))
-                                           )
-                                    ),
-                                    column(3)
+                         tabPanel("About", value = "about",
+                                  
+                                  column(1),
+                                  column(10,
+                                         shiny::HTML("<h3>The METEOR project is based at the University of Oldenburg funded 
+                                         by priority program <a href='https://www.meta-rep.uni-muenchen.de'> META-REP</a> 
+                                         (SPP 2317). Meta-REP involves 15 individual projects with 50+ scholars analyzing 
+                                                     and optimizing replicability in the Behavioral, Social, and Cognitive Sciences.</h3><br>
+                                                     <h2><center>Our team</center></h2><br>")
                                   ),
                                   
                                   # TEAM BIO
-                                  fluidRow(
-                                    column(3),
-                                    column(6,
-                                           shiny::HTML("<br><br><center> <h5>About the team</h5> </center><br>"),
-                                           shiny::HTML("<h2>The team consists of four PIs and three Postdoctoral fellows.</h6>")
-                                    ),
-                                    column(3)
-                                  ),
-                                  
                                   fluidRow(
                                     
                                     style = "height:50px;"),
@@ -411,11 +453,11 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                     
                                     # Andrea
                                     column(2,
-                                           div(class="panel panel-default", 
+                                           div(class="panel panel-default",
                                                div(class="panel-body",  width = "600px",
                                                    align = "center",
                                                    div(
-                                                     tags$img(src = "andrea2.jpg", 
+                                                     tags$img(src = "andrea2.jpg",
                                                               width = "45px", height = "57px")
                                                    ),
                                                    div(
@@ -431,10 +473,10 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                     # Stefan
                                     column(2,
                                            div(class="panel panel-default",
-                                               div(class="panel-body",  width = "600px", 
+                                               div(class="panel-body",  width = "600px",
                                                    align = "center",
                                                    div(
-                                                     tags$img(src = "stefan.jpg", 
+                                                     tags$img(src = "stefan.jpg",
                                                               width = "50px", height = "70px")
                                                    ),
                                                    div(
@@ -450,10 +492,10 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                     # Carsten
                                     column(2,
                                            div(class="panel panel-default",
-                                               div(class="panel-body",  width = "600px", 
+                                               div(class="panel-body",  width = "600px",
                                                    align = "center",
                                                    div(
-                                                     tags$img(src = "carsten.jpg", 
+                                                     tags$img(src = "carsten.jpg",
                                                               width = "50px", height = "50px")),
                                                    div(
                                                      tags$h5("Giessing, Carsten, Dr. rer. nat."),
@@ -469,10 +511,10 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                     # Christiane
                                     column(2,
                                            div(class="panel panel-default",
-                                               div(class="panel-body",  width = "600px", 
+                                               div(class="panel-body",  width = "600px",
                                                    align = "center",
                                                    div(
-                                                     tags$img(src = "christiane2.jpg", 
+                                                     tags$img(src = "christiane2.jpg",
                                                               width = "58px", height = "60px")),
                                                    div(
                                                      tags$h5("Thiel, Christiane, Prof. Dr. rer. nat."),
@@ -493,13 +535,13 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                     # Nadine
                                     column(2,
                                            div(class="panel panel-default",
-                                               div(class="panel-body",  width = "600px", 
+                                               div(class="panel-body",  width = "600px",
                                                    align = "center",
                                                    div(
-                                                     tags$img(src = "nadine.jpg", 
+                                                     tags$img(src = "nadine.jpg",
                                                               width = "40px", height = "55px")),
                                                    div(
-                                                     tags$h5("Jacobsen, Nadine, PhD."),
+                                                     tags$h5("Jacobsen, Nadine, Dr. rer. nat."),
                                                      tags$h6( tags$i("Postdoctoral Fellow"))
                                                    ),
                                                    div(
@@ -511,10 +553,10 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                     # Daniel
                                     column(2,
                                            div(class="panel panel-default",
-                                               div(class="panel-body",  width = "600px", 
+                                               div(class="panel-body",  width = "600px",
                                                    align = "center",
                                                    div(
-                                                     tags$img(src = "Daniel.jpg", 
+                                                     tags$img(src = "Daniel.jpg",
                                                               width = "40px", height = "50px")),
                                                    div(
                                                      tags$h5("Kristanto, Daniel, PhD."),
@@ -528,10 +570,10 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                     ),
                                     column(2,
                                            div(class="panel panel-default",
-                                               div(class="panel-body",  width = "600px", 
+                                               div(class="panel-body",  width = "600px",
                                                    align = "center",
                                                    div(
-                                                     tags$img(src = "cassie.jpg", 
+                                                     tags$img(src = "cassie.jpg",
                                                               width = "50px", height = "68px")),
                                                    div(
                                                      tags$h5("Short, Cassie, PhD."),
