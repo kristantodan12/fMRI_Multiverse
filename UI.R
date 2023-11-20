@@ -35,96 +35,78 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                   shinyjs::useShinyjs(),
                                   
                                   tags$head(tags$script(HTML('
-                                                       var fakeClick = function(tabName) {
-                                                       var dropdownList = document.getElementsByTagName("a");
-                                                       for (var i = 0; i < dropdownList.length; i++) {
-                                                       var link = dropdownList[i];
-                                                       if(link.getAttribute("data-value") == tabName) {
-                                                       link.click();
-                                                       };
-                                                       }
-                                                       };
-                                                       '))),
-                                  fluidRow(
-                                    column(1),
-                                    column(10,
-                                           shiny::HTML("<br><br><center> <h1>METEOR</h1> </center><br>"),
-                                           shiny::HTML("<h3>MastEring ThE OppRessive number of forking paths 
-                                                        unfolded by noisy and complex neural data</h3>")
-                                  ),
-                                    column(1)
-                                  ),
-                                  
-                                  
-                                  # WHAT
-                                  fluidRow(
-                                    column(1),
-                                    column(10,
-                                           shiny::HTML("<br><br><center> <h1>What you'll find here</h1> </center><br>"),
-                                           shiny::HTML("<h3>An interactive tool to help you explore the forking paths 
-                                                       in the data preprocessing and analyses multiverse of graph fMRI study.</h3>")
-                                    ),
-                                    column(1)
-                                  ),
-                                  
-                                  
-                                  # WHERE
-                                  fluidRow(
-                                    column(1),
-                                    column(10,
-                                           shiny::HTML("<br><br><center> <h1>Where it came from</h1> </center><br>"),
-                                           shiny::HTML("<h3>The data are the results of literature review performed in 
-                                                       multiple databases.</h3>")
-                                    ),
-                                    column(1)
-                                  ),
-                                  
-                                  
-                                  # HOW TO START
-                                  fluidRow(
-                                    column(1),
-                                    column(10,
-                                           shiny::HTML("<br><br><center> <h1>How to get started</h1> </center><br>"),
-                                           shiny::HTML("<h3>The app consists of several tabs, each serving a distinct function:<br>
-                                           1.	The initial tab, labeled Introduction, provides an introduction to the app, an overview of its available features, and information on how to use them.<br>
-                                           2.	The following tab, Database, presents all the gathered data, organised into various subsections. These include the PRISMA diagrams, a list of papers included in the Review 2, and lists of steps and options identified during the analysis.<br>
-                                           3.	Next, users can explore the aggregated pipelines across studies in Steps tab. The Steps tab contains multiple subsections: Aggregated steps, Combination, and Order. Aggregated steps visualizes the aggregated pipelines in network fashion, where the nodes represent pre-processing or analysis steps, and the edges are the connection between two steps. By hovering and clicking the nodes/edges, users can get information about the steps and edges, including how many papers used them and their definitions. There are also some settings on the left dashboard to specify the displayed step and the threhshold on the number of papers used the edges. Combination subsection allows users to explore pairs of functional pre-processing steps used in combination. By selecting a specific step, such as Global Signal Regression, a lollipop plot is generated to indicate the frequency at which other steps were employed in conjunction with Global Signal Regression. Lastly, Order subsection enables users to investigate the ordering of specific steps relative to others. For instance, if a user selects the step of Motion Regression, a bar plot is generated to illustrate how many studies implemented other steps following Motion Regression.<br>
-                                           4.	The next tab, Options, enables users to visualise the distribution of options chosen by different studies. For example, users can examine the distribution of software used for fMRI data pre-processing. Within this tab, users can also specify a particular option, such as SPM (Statistical Parametric Mapping), and obtain a list of studies that employed this option.<br>
-                                           5.	Moreover, users can explore and visualise the steps and options taken by individual study in “Individual Paper”. It contains two subsection STEP VISUALISATION and OPTION VISUALISATION, enabling users to interactively explore the pre-processing and analysis pipeline and the specific options chosen by each study.<br>
-                                           6.	We have also incorporated an important feature called the YOUR OWN PIPELINE tab, where users can input their preferred pipeline for fMRI data pre-processing and the associated options. The app then provides a count of the number of studies that have used the same pipeline and a list of these studies. Importantly, users can specify whether the order of their pipeline should be taken into account. If this option is disabled, the algorithm will count the number of papers that have employed the user-inputted pre-processing pipeline, regardless of the order.<br>
-                                           7.	Finally, the last tab, labelled ABOUT, provides information about the project and the research team involved in this endeavour.</h3>")
-                                    ),
-                                    column(1)
-                                  ),
-                                  
-                                  # BUTTONS TO START
+                                    var fakeClick = function(tabName) {
+                                    var dropdownList = document.getElementsByTagName("a");
+                                    for (var i = 0; i < dropdownList.length; i++) {
+                                    var link = dropdownList[i];
+                                    if(link.getAttribute("data-value") == tabName) {
+                                    link.click();
+                                    };
+                                    }
+                                    };
+                                    '))),
                                   
                                   fluidRow(
-                                    
-                                    style = "height:50px;"),
-                                  
-                                  # PAGE BREAK
-                                  tags$hr(),
-                                  
-                                  fluidRow(shiny::HTML("<br><br><center> <h1>Ready to Get Started?</h1> </center>
-                                                 <br>")
+                                    column(12,
+                                           align = "center",
+                                           shiny::tags$h1("METEOR", style = "color: #333;"),
+                                           shiny::tags$h2("Mastering The Oppressive number of forking paths unfolded by noisy and complex neural data",
+                                                          style = "color: #555; font-weight: normal;"),
+                                           shiny::tags$h3("This interactive shiny app allows you to investigate the multiverse of functional Magnetic Resonance Imaging (fMRI) data pre-processing and analysis based on graph theory. You can explore the pre-processing choices of published articles. You can also construct your own preprocessing pipeline and compare it to the ones in the literature.",
+                                                          style = "color: #777; font-weight: normal;"),
+                                           shiny::HTML("<br>"),
+                                           shiny::tags$h3("Database:", style = "color: #333;"),
+                                           shiny::tags$p("The multiverse has been identified by a literature review. All information on the literature review, the included articles, and the coded pre-processing steps and their respective options can be found here."),
+                                           shiny::HTML("<br>"),
+                                           shiny::tags$h3("Steps:", style = "color: #333;"),
+                                           shiny::tags$p("Explore which pre-processing steps have been used and which combinations and orders are common."),
+                                           shiny::HTML("<br>"),
+                                           shiny::tags$h3("Steps: Options:", style = "color: #333;"),
+                                           shiny::tags$p("Explore which options for the respective pre-processing steps have been used by which articles."),
+                                           shiny::HTML("<br>"),
+                                           shiny::tags$h3("Individual article:", style = "color: #333;"),
+                                           shiny::tags$p("Check out pre-processing pipelines and their chosen options for individual article."),
+                                           shiny::HTML("<br>"),
+                                           shiny::tags$h3("Your Own Pipeline:", style = "color: #333;"),
+                                           shiny::tags$p("Construct your own pipeline and compare it to the ones in the literature."),
+                                           shiny::HTML("<br><br>")
+                                    )
                                   ),
+                                  
+                                  fluidRow(shiny::HTML("<br><br><center> <h1>Ready to Get Started?</h1> </center> <br>")),
+                                  
                                   fluidRow(
-                                    column(3),
-                                    column(6,
-                                           tags$div(align = "center", 
-                                                    tags$a("START", 
-                                                           onclick="fakeClick('MA')", 
-                                                           class="btn btn-primary btn-lg")
+                                    column(4),
+                                    column(4,
+                                           tags$div(
+                                             align = "center",
+                                             tags$a("START",
+                                                    onclick = "fakeClick('MA')",
+                                                    class = "btn btn-primary btn-lg"
+                                             )
                                            )
-                                           
                                     ),
-                                    column(3)
+                                    column(4)
                                   ),
-                                  fluidRow(style = "height:25px;"
-                                  )
+                                  
+                                  fluidRow(style = "height:25px;")
                                   
                          ), # Closes the first tabPanel called "Home"
+                         
+                         
+                         tabPanel("Background", value = "background",
+                                  
+                                  #shinyjs::useShinyjs(),
+                                  
+                                  fluidRow(
+                                    column(3),
+                                    column(5,
+                                           shiny::HTML("Summary of introduction of the paper")
+                                    ),
+                                    
+                                  ),
+                                  
+                         ), # Closes tab
                          
                          tabPanel("Database", value = "MA",
                                   mainPanel(
@@ -146,7 +128,7 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                   their respective options were extracted. <br><br></h5>"),
                                         ),
                                         column(8, # Display the first image and caption in a 4-column layout
-                                               shiny::HTML("<h3>Defining the space from general fMRI papers</h3>"),
+                                               shiny::HTML("<h3>Defining the space from general fMRI articles</h3>"),
                                                img(src='prisma1.jpg', align = "center", width = "600px", height = "750px"),
                                                shiny::HTML("<h3>Defining the forking paths of graph fMRI studies</h3>"),
                                                img(src='prisma2.jpg', align = "center", width = "600px", height = "900px")
@@ -192,7 +174,7 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                                        belongs to. <br><br>
                                                                        Steps performed in succession are connected by arrows, 
                                                                        these are edges. The wider the arrow, the higher the number
-                                                                       of papers using this edge. The arrow points in the direction 
+                                                                       of articles using this edge. The arrow points in the direction 
                                                                        of the step that is performed afterward. <br><br>
                                                                        By hovering over a node you can get its name. If you click 
                                                                        on it you get its definition and by how many articles it was 
@@ -212,11 +194,11 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                                                               'Graph Analysis' = (c(nodes$Names_vis[nodes$Groups=='Graph_analysis']))),
                                                                               selected = "All"
                                                                   ),
-                                                                  sliderInput("Thr", "Threshold paper",
+                                                                  sliderInput("Thr", "Threshold article",
                                                                               min = 0, max = 99,
                                                                               value = 0
                                                                   ),
-                                                                  shiny::HTML("<h5>Move the threshold to only see edges used by more papers than the threshold.</h5>"),
+                                                                  shiny::HTML("<h5>Move the threshold to only see edges used by more artciles than the threshold.</h5>"),
                                                     ),  # Closes sidebarPanel
                                                     mainPanel( width = 9,
                                                                forceNetworkOutput(outputId = "WP", width = "100%", height = "700px")
@@ -310,7 +292,7 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                          ),
                                                   
 
-                         tabPanel("Individual Paper", value = "IP",
+                         tabPanel("Individual Article", value = "IP",
                                     tabsetPanel(type = "tabs",
                                                 tabPanel(
                                                   "Step Visualisation",sidebarLayout( 
