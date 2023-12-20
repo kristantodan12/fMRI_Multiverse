@@ -64,7 +64,7 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                            shiny::tags$h3("Steps: Options:", style = "color: #333;"),
                                            shiny::tags$p("Explore which options for the respective pre-processing steps have been used by which articles."),
                                            shiny::HTML("<br>"),
-                                           shiny::tags$h3("Individual article:", style = "color: #333;"),
+                                           shiny::tags$h3("Individual Article:", style = "color: #333;"),
                                            shiny::tags$p("Check out pre-processing pipelines and their chosen options for individual article."),
                                            shiny::HTML("<br>"),
                                            shiny::tags$h3("Your Own Pipeline:", style = "color: #333;"),
@@ -94,25 +94,25 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                          ), # Closes the first tabPanel called "Home"
                          
                          
-                         tabPanel("Background", value = "background",
-                                  
-                                  #shinyjs::useShinyjs(),
-                                  
-                                  fluidRow(
-                                    column(3),
-                                    column(5,
-                                           shiny::HTML("Summary of introduction of the paper")
-                                    ),
-                                    
-                                  ),
-                                  
-                         ), # Closes tab
+                         # tabPanel("Background", value = "background",
+                         #          
+                         #          #shinyjs::useShinyjs(),
+                         #          
+                         #          fluidRow(
+                         #            column(3),
+                         #            column(5,
+                         #                   shiny::HTML("Summary of introduction of the paper")
+                         #            ),
+                         #            
+                         #          ),
+                         #          
+                         # ), # Closes tab
                          
                          tabPanel("Database", value = "MA",
                                   mainPanel(
                                     tabsetPanel(type = "tabs",
                                     tabPanel(
-                                      "PRISMA diagram",
+                                      "PRISMA Diagram",
                                       shiny::HTML("<h1>PRISMA diagram</h1>"),
                                       fluidRow(
                                         column(4, 
@@ -127,11 +127,11 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                   Information on the pre-processing steps and 
                                                   their respective options were extracted. <br><br></h5>"),
                                         ),
-                                        column(8, # Display the first image and caption in a 4-column layout
+                                        column(8, 
                                                shiny::HTML("<h3>Defining the space from general fMRI articles</h3>"),
-                                               img(src='prisma1.jpg', align = "center", width = "600px", height = "750px"),
+                                               img(src='prisma1.jpg', align = "center", width = "600px", height = "700px"),
                                                shiny::HTML("<h3>Defining the forking paths of graph fMRI studies</h3>"),
-                                               img(src='prisma2.jpg', align = "center", width = "600px", height = "900px")
+                                               img(src='prisma2.jpg', align = "center", width = "600px", height = "850px")
                                         ),
                                         # column(4, # Display the second image and caption in a 4-column layout
                                         #        shiny::HTML("<h3>Defining the forking paths of graph fMRI studies</h3>"),
@@ -163,7 +163,7 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                          tabPanel("Steps", value = "WH",
                                     tabsetPanel(type = "tabs",
                                                 tabPanel(width = 12,
-                                                  "Aggregated steps",
+                                                  "Aggregated Steps",
                                                   sidebarLayout( 
                                                     
                                                     sidebarPanel( width = 3,
@@ -187,6 +187,7 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                                   selectInput("Node_WP",
                                                                               label   = "Explore edges of step:",
                                                                               choices =  list('All' = list('All'),
+                                                                                              'Software',
                                                                                               'Structural Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Structural_preprocessing'])),
                                                                                               'Functional Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Functional_preprocessing'])),
                                                                                               'Noise Removal' = (c(nodes$Names_vis[nodes$Groups=='Noise_removal'])),
@@ -205,6 +206,36 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                     )  # Closes the mainPanel
                                                   )  # Closes the sidebarLayout
                                                 ),
+                                                tabPanel(width = 12,
+                                                         "Individual Step",
+                                                         sidebarLayout( 
+                                                           
+                                                           sidebarPanel( width = 3,
+                                                                         shiny::HTML("<h5><b>Explore the individual step.</b><br><br>
+                                                                       Please select a specific step from drop-down menu. The list
+                                                                                     of articles used the selected steps will be available
+                                                                                     on the table in the main panel. <br><br>"
+                                                                         ),
+                                                                         selectInput("select_IS",
+                                                                                     label   = "Select the step:",
+                                                                                     choices =  list('Software',
+                                                                                                     'Structural Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Structural_preprocessing'])),
+                                                                                                     'Functional Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Functional_preprocessing'])),
+                                                                                                     'Noise Removal' = (c(nodes$Names_vis[nodes$Groups=='Noise_removal'])),
+                                                                                                     'FC Definition' = (c(nodes$Names_vis[nodes$Groups=='FC_def'])),
+                                                                                                     'Graph Analysis' = (c(nodes$Names_vis[nodes$Groups=='Graph_analysis']))),
+                                                                                     selected = "All"
+                                                                         ),
+
+                                                           ),  # Closes sidebarPanel
+                                                           mainPanel( 
+                                                             fluidRow(
+                                                             column(12, textOutput("selected_IS")),
+                                                             column(12, DT::dataTableOutput("table_IS"))
+                                                           ),
+                                                           )  # Closes the mainPanel
+                                                         )  # Closes the sidebarLayout
+                                                ),
                                                 tabPanel(
                                                   "Combination",
                                                   sidebarPanel( width = 3,
@@ -214,7 +245,8 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                                 used in conjunction with this step. <br><br></h5>"),
                                                                 selectInput("selectDecisionYN",
                                                                             label   = "Explore combinations of step:",
-                                                                            choices =  list('Structural Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Structural_preprocessing'])),
+                                                                            choices =  list('Software',
+                                                                                            'Structural Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Structural_preprocessing'])),
                                                                                             'Functional Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Functional_preprocessing'])),
                                                                                             'Noise Removal' = (c(nodes$Names_vis[nodes$Groups=='Noise_removal'])),
                                                                                             'FC Definition' = (c(nodes$Names_vis[nodes$Groups=='FC_def'])),
@@ -235,14 +267,14 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                
                                                 ),
                                                 tabPanel(
-                                                  "Orders",
+                                                  "Order",
                                                   sidebarPanel( width = 3,
                                                                 shiny::HTML("<h5><b>Investigate the order of pre-processing steps.</b><br><br>
                                                                 Select a preprocessing step from the dropdown below to see which 
                                                                 preprocessing steps were performed AFTER the selected one.<br><br></h5>"),
                                                                 selectInput("selectDecisionOR",
                                                                             label   = "Explore steps performed after step:",
-                                                                            choices =  list(
+                                                                            choices =  list('Software',
                                                                                             'Structural Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Structural_preprocessing'])),
                                                                                             'Functional Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Functional_preprocessing'])),
                                                                                             'Noise Removal' = (c(nodes$Names_vis[nodes$Groups=='Noise_removal'])),
@@ -295,15 +327,15 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                          tabPanel("Individual Article", value = "IP",
                                     tabsetPanel(type = "tabs",
                                                 tabPanel(
-                                                  "Step Visualisation",sidebarLayout( 
+                                                  "Step Visualization",sidebarLayout( 
                                                     
                                                     sidebarPanel( width = 3,
                                                                   shiny::HTML("<h5><b>Visualize the pre-processing steps taken by a 
                                                                   specific article.</b><br><br>
-                                                                  Select the code of the article in the dropdown below to get 
+                                                                  Select the key of the article in the dropdown below to get 
                                                                   a visualization of the pre-processing steps and to generate a 
                                                                   table of the pre-procesing steps. You can 
-                                                                  find the code of each study in the Database tab.<br></h5>"),
+                                                                  find the key of each study in the Database tab.<br></h5>"),
                                                                   selectInput("selectPapers",
                                                                               label   = "Select article:",
                                                                               choices =  c(dat$Key),
@@ -319,7 +351,7 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                   )
                                                 ),
                                                 tabPanel(
-                                                  "Option visualisation",
+                                                  "Option Visualization",
                                                   sidebarLayout( 
                                                     
                                                     sidebarPanel( width = 3,
@@ -364,7 +396,7 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                   regardless of the order. <br></h5>"),
                                                   selectInput("selectStep_DIY",
                                                               label   = "Select the step you want to include",
-                                                              choices =  list(
+                                                              choices =  list('Software',
                                                                               'Structural Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Structural_preprocessing'])),
                                                                               'Functional Preprocessing' = (c(nodes$Names_vis[nodes$Groups=='Functional_preprocessing'])),
                                                                               'Noise Removal' = (c(nodes$Names_vis[nodes$Groups=='Noise_removal'])),
