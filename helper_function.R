@@ -21,7 +21,17 @@ Sys.setlocale('LC_CTYPE','C')
 #########ReadData############
 #############################
 dat <- read_excel("Database.xlsx", sheet = "Coding_steps")
-as.integer(dat$Key)
+#Put Software as the first step of all papers
+# Find rows where Step1 is not "Software"
+rows_to_change <- dat$Step1 != "Software"
+
+# For each row to change, shift values to the right and set Step1 to "Software"
+for (i in which(rows_to_change)) {
+  n <- ncol(dat)
+  dat[i, 2:n] <- c("Software", dat[i, 2:(n-1)])
+}
+
+#as.integer(dat$Key)
 dat_prep1 <- select(dat, contains("Step"))
 dat_prep1[dat_prep1 == ""] <- NA 
 steps <- read_excel("Database.xlsx", sheet = "All_steps")
@@ -154,7 +164,7 @@ nodes <- steps
 nodes$ID <- c(1:nrow(steps))
 nodes$Groups.type <- as.factor(nodes$Groups)
 nodes[sapply(nodes, is.factor)] <- data.matrix(nodes[sapply(nodes, is.factor)])
-clrs <- c("mediumpurple3", "darkolivegreen3", "firebrick", "darkorange", "dodgerblue")
+clrs <- c("mediumpurple3", "darkolivegreen3", "firebrick", "darkorange", "gray","dodgerblue")
 nodes$col <- clrs[nodes$Groups.type]
 nodes$ID <- c(1:nrow(steps))
 
@@ -271,7 +281,7 @@ colnames(st) <- "Names"
 mat_yn <- readRDS("mat_yn.RDS")
 
 ###Steps
-mat_or <- matrix(0, nrow = length(st$Names), ncol = length(st$Names))
+# mat_or <- matrix(0, nrow = length(st$Names), ncol = length(st$Names))
 # for (i in 1:length(st$Names)){
 #   sti <- st$Names[i]
 #   id_i <- which(dat == sti, arr.ind = T)

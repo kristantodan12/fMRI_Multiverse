@@ -742,3 +742,23 @@ fig <- fig %>%
   )
 
 orca(fig, "op_motion.png")
+
+
+####Citation Step
+dec_IS <-"GraphMeasDefine"
+dec_IS <- nodes$Names[which(nodes$Names_vis == dec_IS)]
+id_dec_IS <- which(dat == dec_IS, arr.ind = TRUE)
+new_tab_IS <- p_inf[id_dec_IS[, 1], ]
+a <- paste(new_tab_IS$Key, collapse = "; ")
+a
+
+####Citation Option
+dec <- "Average"
+dec1 <- "ResultAggregate"
+dec1 <- nodes$Names[which(nodes$Names_vis == dec1)]
+dat_op_or_sel <- dat_op_or[, dec1]
+id_dec <- which(dat_op_or_sel == dec, arr.ind = TRUE)
+new_tab <- p_inf[id_dec[, 1], ]
+a <- paste(new_tab$Key, collapse = "; ")
+a
+

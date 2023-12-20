@@ -110,7 +110,7 @@ server <- function(input, output, session){
       id_fn <- which(nodes$Names == first_nd)
       V(g)$color <- nodes$col
       V(g)$label <- nodes2$Names_vis
-      V(g)$color[id_fn] <- "white"
+      #V(g)$color[id_fn] <- "white"
       cdi <- readRDS("coordinates_steps_shiny3.RDS")
       cdi <- cdi[1:nrow(cdi)-1, ]
       plot(g, 
@@ -136,7 +136,7 @@ server <- function(input, output, session){
            asp = 0.7
       )
       
-      legend(x=-1, y=-1.1, c("FC definition","Functional_preprocessing", "Graph_analysis", "Noise_removal", "Structural_preprocessing"), pch=21,
+      legend(x=-1, y=-1.1, c("FC definition","Functional_preprocessing", "Graph_analysis", "Noise_removal","Software", "Structural_preprocessing"), pch=21,
              col="#777777", pt.bg=clrs, pt.cex=2, cex=1, bty="n", ncol=1)
       
     })
@@ -192,8 +192,8 @@ server <- function(input, output, session){
                  Value = "value", NodeID = "Names_vis", linkWidth = JS("function(d) { return Math.sqrt(d.value)/3; }"),
                  Nodesize = "size2", Group = "Groups", radiusCalculation = JS("Math.sqrt(d.nodesize)+6"),
                  opacity = 0.9, zoom = TRUE, fontSize = 8, arrows = TRUE, legend = TRUE, bounded = TRUE, clickAction = script, 
-                 colourScale = JS('d3.scaleOrdinal().domain(["Structural_preprocessing", "Functional_preprocessing", "Noise_removal", "FC_def", "Graph_analysis"]).
-                                  range(["#1f77b4", "#2ca02c", "#ff7f0e", "#9467bd", "#e31a1c"])'))
+                 colourScale = JS('d3.scaleOrdinal().domain(["Software","Structural_preprocessing", "Functional_preprocessing", "Noise_removal", "FC_def", "Graph_analysis"]).
+                                  range(["#808080", "#1f77b4", "#2ca02c", "#ff7f0e", "#9467bd", "#e31a1c"])'))
     
     fn$x$nodes$Names <- nodes2$Names_vis
     fn$x$nodes$Definition <- nodes2$Definition
@@ -409,6 +409,33 @@ server <- function(input, output, session){
     )
   })
   
+  output$selected_IS <- renderText({
+    paste("You have selected step", input$select_IS, "which was used by articles:")
+  })
+  
+  
+  output$table_IS <- DT::renderDataTable({
+    dec_IS <- input$select_IS
+    dec_IS <- nodes$Names[which(nodes$Names_vis == dec_IS)]
+    id_dec_IS <- which(dat == dec_IS, arr.ind = TRUE)
+    new_tab_IS <- p_inf[id_dec_IS[, 1], ]
+    
+    datatable(new_tab_IS,
+              options = list(
+                dom = 'Bfrtip',
+                pageLength = 10,
+                scrollX = TRUE,
+                autoWidth = TRUE,
+                paging = TRUE,
+                searching = FALSE,
+                ordering = TRUE,
+                columnDefs = list(
+                  list(width = '300px', targets = c(2,3))
+                )
+                # fixedHeader = TRUE
+              )
+    )
+  })
   
   output$plot_YN <- renderPlot(
     width = 800, height = 800, res = 100,
