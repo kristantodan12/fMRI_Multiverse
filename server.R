@@ -53,7 +53,7 @@ server <- function(input, output, session){
   })
   
   output$list_paper <- DT::renderDataTable(
-    p_inf,
+    p_inf, escape = FALSE,
     #extensions = "FixedHeader",
     style="bootstrap",
     options = list(
@@ -67,6 +67,7 @@ server <- function(input, output, session){
       #fixedHeader = TRUE,
     )
   )
+
   output$list_steps <- DT::renderDataTable(
     steps,
     #extensions = "FixedHeader",
@@ -392,7 +393,7 @@ server <- function(input, output, session){
     id_dec <- which(dat_op_or_sel == dec, arr.ind = TRUE)
     new_tab <- p_inf[id_dec[, 1], ]
     
-    datatable(new_tab,
+    datatable(new_tab, escape = FALSE,
               options = list(
                 dom = 'Bfrtip',
                 pageLength = 10,
@@ -420,7 +421,7 @@ server <- function(input, output, session){
     id_dec_IS <- which(dat == dec_IS, arr.ind = TRUE)
     new_tab_IS <- p_inf[id_dec_IS[, 1], ]
     
-    datatable(new_tab_IS,
+    datatable(new_tab_IS, escape = FALSE,
               options = list(
                 dom = 'Bfrtip',
                 pageLength = 10,
@@ -620,7 +621,7 @@ server <- function(input, output, session){
     
     output$table_DIY2 <- DT::renderDataTable({
       table_DIYfin <- p_inf[row_finDIY, ]
-      datatable(table_DIYfin,
+      datatable(table_DIYfin, escape = FALSE,
                 options = list(
                   dom = 'Bfrtip',
                   pageLength = 20,
