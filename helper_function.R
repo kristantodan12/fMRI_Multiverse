@@ -36,15 +36,13 @@ dat_prep1 <- select(dat, contains("Step"))
 dat_prep1[dat_prep1 == ""] <- NA 
 steps <- read_excel("Database.xlsx", sheet = "All_steps")
 dat_op_or <- read_excel("Database.xlsx", sheet = "Coding_options_or")
-as.integer(dat_op_or$Key)
 dat_op_or[dat_op_or == ""] <- NA
 dat_op <- read_excel("Database.xlsx", sheet = "Coding_options")
-as.integer(dat_op$Key)
 dat_prep_op1 <- select(dat_op, contains("Choice"))
 dat_prep_op1[dat_prep_op1 == ""] <- NA 
 steps_op <- read_excel("Database.xlsx", sheet = "All_options")
 p_inf <- read_excel("Database.xlsx", sheet = "Paper_info")
-as.integer(p_inf$Key)
+p_inf$DOI <- sprintf('<a href="https://doi.org/%s" target="_blank">%s</a>', p_inf$DOI, p_inf$DOI)
 as.integer(p_inf$Year)
 cn_p_inf <- colnames(p_inf)
 
