@@ -52,20 +52,20 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                            shiny::tags$h1("METEOR", style = "color: #333;"),
                                            shiny::tags$h2("Mastering The Oppressive number of forking paths unfolded by noisy and complex neural data",
                                                           style = "color: #555; font-weight: normal;"),
-                                           shiny::tags$h3("This interactive shiny app allows you to investigate the multiverse of functional Magnetic Resonance Imaging (fMRI) data pre-processing and analysis based on graph theory. You can explore the pre-processing choices of published articles. You can also construct your own preprocessing pipeline and compare it to the ones in the literature.",
+                                           shiny::tags$h3("This interactive shiny app allows you to investigate the multiverse of functional Magnetic Resonance Imaging (fMRI) data preprocessing and analysis based on graph theory. You can explore the preprocessing choices of published articles. You can also construct your own preprocessing pipeline and compare it to the ones in the literature.",
                                                           style = "color: #777; font-weight: normal;"),
                                            shiny::HTML("<br>"),
                                            shiny::tags$h3("Database:", style = "color: #333;"),
-                                           shiny::tags$p("The multiverse has been identified by a literature review. All information on the literature review, the included articles, and the coded pre-processing steps and their respective options can be found here."),
+                                           shiny::tags$p("The multiverse has been identified by a literature review. All information on the literature review, the included articles, and the coded preprocessing steps and their respective options can be found here."),
                                            shiny::HTML("<br>"),
                                            shiny::tags$h3("Steps:", style = "color: #333;"),
-                                           shiny::tags$p("Explore which pre-processing steps have been used and which combinations and orders are common."),
+                                           shiny::tags$p("Explore which preprocessing steps have been used and which combinations and orders are common."),
                                            shiny::HTML("<br>"),
                                            shiny::tags$h3("Steps: Options:", style = "color: #333;"),
-                                           shiny::tags$p("Explore which options for the respective pre-processing steps have been used by which articles."),
+                                           shiny::tags$p("Explore which options for the respective preprocessing steps have been used by which articles."),
                                            shiny::HTML("<br>"),
                                            shiny::tags$h3("Individual Article:", style = "color: #333;"),
-                                           shiny::tags$p("Check out pre-processing pipelines and their chosen options for individual article."),
+                                           shiny::tags$p("Check out preprocessing pipelines and their chosen options for individual article."),
                                            shiny::HTML("<br>"),
                                            shiny::tags$h3("Your Own Pipeline:", style = "color: #333;"),
                                            shiny::tags$p("Construct your own pipeline and compare it to the ones in the literature."),
@@ -124,14 +124,14 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                   Items for Systematic Reviews and Meta-Analyses (PRISMA) flowchart on the right. <br><br>
                                                   <b>Data extraction:</b> All data was coded by one coder. Other two coders coded the data
                                                   independently for 25 articles each. The codes were then compared and the discrepancies were discussed.
-                                                  Information on the pre-processing steps and 
+                                                  Information on the preprocessing steps and 
                                                   their respective options were extracted. <br><br></h5>"),
                                         ),
                                         column(8, 
                                                shiny::HTML("<h3>Defining the space from general fMRI articles</h3>"),
-                                               img(src='prisma1.jpg', align = "center", width = "600px", height = "700px"),
+                                               img(src='prismadia1.jpg', align = "center", width = "600px", height = "700px"),
                                                shiny::HTML("<h3>Defining the forking paths of graph fMRI studies</h3>"),
-                                               img(src='prisma2.jpg', align = "center", width = "600px", height = "850px")
+                                               img(src='prismadia2.jpg', align = "center", width = "600px", height = "850px")
                                         ),
                                         # column(4, # Display the second image and caption in a 4-column layout
                                         #        shiny::HTML("<h3>Defining the forking paths of graph fMRI studies</h3>"),
@@ -140,8 +140,13 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                       )
                                     ),
                                     tabPanel(
-                                      "List of Included Articles",
-                                      shiny::HTML("<h5><b>List of included articles for graph fMRI studies</b></h5>"),
+                                      "List of Included Articles (Review 1)",
+                                      shiny::HTML("<h5><b>List of included articles for fMRI preprocessing steps (review 1)</b></h5>"),
+                                      DT::dataTableOutput("list_paper1")
+                                    ),
+                                    tabPanel(
+                                      "List of Included Articles (Review 2)",
+                                      shiny::HTML("<h5><b>List of included articles for graph fMRI and behavior studies (revoew 2)</b></h5>"),
                                       DT::dataTableOutput("list_paper")
                                     ),
                                     tabPanel(
@@ -169,7 +174,7 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                     sidebarPanel( width = 3,
                                                                   shiny::HTML("<h5><b>Explore the aggregated preprocessing 
                                                                        pipelines of all articles in a network fashion.</b><br><br>
-                                                                       Each node (circle) represents a pre-processing step. The 
+                                                                       Each node (circle) represents a preprocessing step. The 
                                                                        color of a node indicates the processing group the step 
                                                                        belongs to. <br><br>
                                                                        Steps performed in succession are connected by arrows, 
@@ -239,7 +244,7 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                 tabPanel(
                                                   "Combination",
                                                   sidebarPanel( width = 3,
-                                                                shiny::HTML("<h5><b>Explore pairs of pre-processing steps used in 
+                                                                shiny::HTML("<h5><b>Explore pairs of preprocessing steps used in 
                                                                 combination. </b><br><br>
                                                                 Select a step from the dropdown below to see which steps were are 
                                                                 used in conjunction with this step. <br><br></h5>"),
@@ -253,9 +258,9 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                                                             'Graph Analysis' = (c(nodes$Names_vis[nodes$Groups=='Graph_analysis']))),
                                                                             selected = "Software"
                                                                 ),
-                                                                shiny::HTML("<h5>Lollipop plot of the number of pre-processing steps use together with 
+                                                                shiny::HTML("<h5>Lollipop plot of the number of preprocessing steps use together with 
                                                               the step selected above. Selected step in red font. Color 
-                                                                          indicates the pre-processing group.</h5>"),
+                                                                          indicates the preprocessing group.</h5>"),
                                                   ),
                                                   mainPanel(
                                                     fluidRow(
@@ -269,7 +274,7 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                 tabPanel(
                                                   "Order",
                                                   sidebarPanel( width = 3,
-                                                                shiny::HTML("<h5><b>Investigate the order of pre-processing steps.</b><br><br>
+                                                                shiny::HTML("<h5><b>Investigate the order of preprocessing steps.</b><br><br>
                                                                 Select a preprocessing step from the dropdown below to see which 
                                                                 preprocessing steps were performed AFTER the selected one.<br><br></h5>"),
                                                                 selectInput("selectDecisionOR",
@@ -330,11 +335,11 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                   "Step Visualization",sidebarLayout( 
                                                     
                                                     sidebarPanel( width = 3,
-                                                                  shiny::HTML("<h5><b>Visualize the pre-processing steps taken by a 
+                                                                  shiny::HTML("<h5><b>Visualize the preprocessing steps taken by a 
                                                                   specific article.</b><br><br>
                                                                   Select the key of the article in the dropdown below to get 
-                                                                  a visualization of the pre-processing steps and to generate a 
-                                                                  table of the pre-procesing steps. You can 
+                                                                  a visualization of the preprocessing steps and to generate a 
+                                                                  table of the preprocessing steps. You can 
                                                                   find the key of each study in the Database tab.<br></h5>"),
                                                                   selectInput("selectPapers",
                                                                               label   = "Select article:",
@@ -355,10 +360,10 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                   sidebarLayout( 
                                                     
                                                     sidebarPanel( width = 3,
-                                                                  shiny::HTML("<h5><b>Visualize the options of pre-processing steps taken by a 
+                                                                  shiny::HTML("<h5><b>Visualize the options of preprocessing steps taken by a 
                                                                   specific article.</b><br><br>
                                                                   Select the code of the article in the dropdown below to get 
-                                                                  a visualization of the options of the pre-processing steps and to generate a 
+                                                                  a visualization of the options of the preprocessing steps and to generate a 
                                                                   table of the options. You can 
                                                                   find the code of each study in the Database tab.<br></h5>"),
                                                                   selectInput("selectPapers_cv",
@@ -385,7 +390,7 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
 
                                     sidebarPanel( width = 3,
                                                   shiny::HTML("<h5><b>Construct your preferred pipeline for fMRI data 
-                                                  pre-processing</b><br><br>
+                                                  preprocessing</b><br><br>
                                                   Select the step you want to include with the dropdown below. You may also 
                                                   select a specific option or any of the available ones. You can add and 
                                                   delete steps with the respective buttons. <br><br>
