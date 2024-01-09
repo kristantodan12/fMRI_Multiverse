@@ -68,6 +68,22 @@ server <- function(input, output, session){
     )
   )
 
+  output$list_paper1 <- DT::renderDataTable(
+    p_inf1, escape = FALSE,
+    #extensions = "FixedHeader",
+    style="bootstrap",
+    options = list(
+      dom = 'Bfrtip',
+      pageLength = 20,
+      scrollX=TRUE,
+      autoWidth = TRUE,
+      paging=TRUE,
+      searching=FALSE,
+      ordering=TRUE
+      #fixedHeader = TRUE,
+    )
+  )
+
   output$list_steps <- DT::renderDataTable(
     steps,
     #extensions = "FixedHeader",
@@ -418,8 +434,8 @@ server <- function(input, output, session){
   output$table_IS <- DT::renderDataTable({
     dec_IS <- input$select_IS
     dec_IS <- nodes$Names[which(nodes$Names_vis == dec_IS)]
-    id_dec_IS <- which(dat == dec_IS, arr.ind = TRUE)
-    new_tab_IS <- p_inf[id_dec_IS[, 1], ]
+    id_dec_IS <- which(apply(dat, 1, function(x2) all(dec_IS %in% x2)))
+    new_tab_IS <- p_inf[id_dec_IS, ]
     
     datatable(new_tab_IS, escape = FALSE,
               options = list(

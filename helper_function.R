@@ -44,6 +44,9 @@ steps_op <- read_excel("Database.xlsx", sheet = "All_options")
 p_inf <- read_excel("Database.xlsx", sheet = "Paper_info")
 p_inf$DOI <- sprintf('<a href="https://doi.org/%s" target="_blank">%s</a>', p_inf$DOI, p_inf$DOI)
 as.integer(p_inf$Year)
+p_inf1 <- read_excel("Database.xlsx", sheet = "Paper_info1")
+p_inf1$DOI <- sprintf('<a href="https://doi.org/%s" target="_blank">%s</a>', p_inf1$DOI, p_inf1$DOI)
+as.integer(p_inf1$Year)
 cn_p_inf <- colnames(p_inf)
 
 #dat with name visual
@@ -259,41 +262,46 @@ clrs_op <- c(
 #########Further Analyses###########
 ####################################
 ###Yes or no
-st <- nodes[ ,"Names"]
-st <- data.frame(st)
-colnames(st) <- "Names"
+# st <- nodes[ ,"Names"]
+# st <- data.frame(st)
+# colnames(st) <- "Names"
 # mat_yn <- matrix(0, nrow = length(st$Names), ncol = length(st$Names))
 # for (i in 1:length(st$Names)){
 #   sti <- st$Names[i]
-#   id_i <- which(dat == sti, arr.ind = T)
+#   id_i <- which(apply(dat, 1, function(x2) all(sti %in% x2))) #which(dat == sti, arr.ind = T)
 #   for (j in 1:length(st$Names)){
 #     stj <- st$Names[j]
-#     id_j <- which(dat == stj, arr.ind = T)
-#     use_both <- merge(id_i, id_j, by = "row")
-#     n_p <- length(use_both$row)
+#     id_j <- which(apply(dat, 1, function(x2) all(stj %in% x2))) #which(dat == stj, arr.ind = T)
+#     use_both <- intersect(id_i, id_j)
+#     n_p <- length(use_both)
 #     mat_yn[i,j] <- n_p
 #   }
 # }
+# diag(mat_yn) <- 0
 # colnames(mat_yn) <- nodes$Names_vis
 # rownames(mat_yn) <- nodes$Names_vis
+# saveRDS(mat_yn, "mat_yn.RDS")
 mat_yn <- readRDS("mat_yn.RDS")
 
 ###Steps
 # mat_or <- matrix(0, nrow = length(st$Names), ncol = length(st$Names))
 # for (i in 1:length(st$Names)){
 #   sti <- st$Names[i]
-#   id_i <- which(dat == sti, arr.ind = T)
+#   id_i <- which(apply(dat, 1, function(x2) all(sti %in% x2)))
 #   for (j in 1:length(st$Names)){
 #     stj <- st$Names[j]
-#     id_j <- which(dat == stj, arr.ind = T)
-#     use_both <- merge(id_i, id_j, by = "row")
-#     ord <- use_both$col.x - use_both$col.y
-#     i_first <- length(which(ord<0))
+#     id_j <- which(apply(dat, 1, function(x2) all(stj %in% x2)))
+#     use_both <- intersect(id_i, id_j)
+#     ord <- sapply(use_both, function(x) min(which(dat[x,] == sti)) - min(which(dat[x,] == stj)))
+#     i_first <- sum(ord < 0)
 #     mat_or[i,j] <- i_first
 #   }
 # }
+
+# diag(mat_or) <- 0
 # colnames(mat_or) <- nodes$Names_vis
 # rownames(mat_or) <- nodes$Names_vis
+# saveRDS(mat_or, "mat_or.RDS")
 mat_or <- readRDS("mat_or.RDS")
 
 #######################

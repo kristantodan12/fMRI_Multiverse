@@ -464,7 +464,7 @@ g_m <- graph_from_data_frame(d=links3, vertices=nodes3, directed=T)
 #A <- as_adjacency_matrix(g_m, attr="value")
 deg <- degree(g_m)
 nodes3$degree <- deg
-colors <- c("mediumpurple3", "darkolivegreen3", "firebrick", "darkorange", "dodgerblue")
+colors <- c("mediumpurple3", "darkolivegreen3", "firebrick", "darkorange", "gray","dodgerblue")
 nodes3$col <- colors[nodes3$Groups.type]
 #ggplot(nodes3, aes(y=Names, x=degree)) +
 #  geom_bar(stat = "identity") +
@@ -476,7 +476,7 @@ nodes3 <- nodes3 %>%
 ggplot(nodes3, aes(x=Names_or, y=degree)) +
   geom_segment( aes(x=Names_or, xend=Names_or, y=0, yend=degree), color=nodes3$col) +
   geom_point( color=nodes3$col, size=4, alpha=0.6) +
-  geom_text(aes(label = degree), vjust = 0.5, hjust = -0.5, size = 4, color = "black") +
+  geom_text(aes(label = degree), vjust = 0.5, hjust = 0.2, size = 4, color = "black") +
   theme_light() +
   coord_flip() +
   theme(
@@ -486,7 +486,7 @@ ggplot(nodes3, aes(x=Names_or, y=degree)) +
   ) +
   theme(text=element_text(size=12,  family="Times New Roman")) +
   labs(x = "Steps", y = "Degree")
-ggsave("degree.png", width = 15, height = 23, units = "cm", dpi = 320)
+ggsave("degree.png", width = 15, height = 23, units = "cm", dpi = 300)
 
 ###With polar plot
 nodes3_SP <- subset(nodes3, Groups == "Structural_preprocessing")
