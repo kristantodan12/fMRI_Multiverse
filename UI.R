@@ -1,4 +1,3 @@
-library(shiny)
 library(networkD3)
 library(dplyr)
 library(igraph)
@@ -30,68 +29,68 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                        }",
                            "body {padding-top: 150px;}"),
                          
-                         tabPanel("Introduction", value = "home",
+                        #  tabPanel("Introduction", value = "home",
                                   
-                                  shinyjs::useShinyjs(),
+                        #           shinyjs::useShinyjs(),
                                   
-                                  tags$head(tags$script(HTML('
-                                    var fakeClick = function(tabName) {
-                                    var dropdownList = document.getElementsByTagName("a");
-                                    for (var i = 0; i < dropdownList.length; i++) {
-                                    var link = dropdownList[i];
-                                    if(link.getAttribute("data-value") == tabName) {
-                                    link.click();
-                                    };
-                                    }
-                                    };
-                                    '))),
+                        #           tags$head(tags$script(HTML('
+                        #             var fakeClick = function(tabName) {
+                        #             var dropdownList = document.getElementsByTagName("a");
+                        #             for (var i = 0; i < dropdownList.length; i++) {
+                        #             var link = dropdownList[i];
+                        #             if(link.getAttribute("data-value") == tabName) {
+                        #             link.click();
+                        #             };
+                        #             }
+                        #             };
+                        #             '))),
                                   
-                                  fluidRow(
-                                    column(12,
-                                           align = "center",
-                                           shiny::tags$h1("METEOR", style = "color: #333;"),
-                                           shiny::tags$h2("Mastering The Oppressive number of forking paths unfolded by noisy and complex neural data",
-                                                          style = "color: #555; font-weight: normal;"),
-                                           shiny::tags$h3("This interactive shiny app allows you to investigate the multiverse of functional Magnetic Resonance Imaging (fMRI) data preprocessing and analysis based on graph theory. You can explore the preprocessing choices of published articles. You can also construct your own preprocessing pipeline and compare it to the ones in the literature.",
-                                                          style = "color: #777; font-weight: normal;"),
-                                           shiny::HTML("<br>"),
-                                           shiny::tags$h3("Database:", style = "color: #333;"),
-                                           shiny::tags$p("The multiverse has been identified by a literature review. All information on the literature review, the included articles, and the coded preprocessing steps and their respective options can be found here."),
-                                           shiny::HTML("<br>"),
-                                           shiny::tags$h3("Steps:", style = "color: #333;"),
-                                           shiny::tags$p("Explore which preprocessing steps have been used and which combinations and orders are common."),
-                                           shiny::HTML("<br>"),
-                                           shiny::tags$h3("Steps: Options:", style = "color: #333;"),
-                                           shiny::tags$p("Explore which options for the respective preprocessing steps have been used by which articles."),
-                                           shiny::HTML("<br>"),
-                                           shiny::tags$h3("Individual Article:", style = "color: #333;"),
-                                           shiny::tags$p("Check out preprocessing pipelines and their chosen options for individual article."),
-                                           shiny::HTML("<br>"),
-                                           shiny::tags$h3("Your Own Pipeline:", style = "color: #333;"),
-                                           shiny::tags$p("Construct your own pipeline and compare it to the ones in the literature."),
-                                           shiny::HTML("<br><br>")
-                                    )
-                                  ),
+                        #           fluidRow(
+                        #             column(12,
+                        #                    align = "center",
+                        #                    shiny::tags$h1("METEOR", style = "color: #333;"),
+                        #                    shiny::tags$h2("Mastering The Oppressive number of forking paths unfolded by noisy and complex neural data",
+                        #                                   style = "color: #555; font-weight: normal;"),
+                        #                    shiny::tags$h3("This interactive shiny app allows you to investigate the multiverse of functional Magnetic Resonance Imaging (fMRI) data preprocessing and analysis based on graph theory. You can explore the preprocessing choices of published articles. You can also construct your own preprocessing pipeline and compare it to the ones in the literature.",
+                        #                                   style = "color: #777; font-weight: normal;"),
+                        #                    shiny::HTML("<br>"),
+                        #                    shiny::tags$h3("Database:", style = "color: #333;"),
+                        #                    shiny::tags$p("The multiverse has been identified by a literature review. All information on the literature review, the included articles, and the coded preprocessing steps and their respective options can be found here."),
+                        #                    shiny::HTML("<br>"),
+                        #                    shiny::tags$h3("Steps:", style = "color: #333;"),
+                        #                    shiny::tags$p("Explore which preprocessing steps have been used and which combinations and orders are common."),
+                        #                    shiny::HTML("<br>"),
+                        #                    shiny::tags$h3("Steps: Options:", style = "color: #333;"),
+                        #                    shiny::tags$p("Explore which options for the respective preprocessing steps have been used by which articles."),
+                        #                    shiny::HTML("<br>"),
+                        #                    shiny::tags$h3("Individual Article:", style = "color: #333;"),
+                        #                    shiny::tags$p("Check out preprocessing pipelines and their chosen options for individual article."),
+                        #                    shiny::HTML("<br>"),
+                        #                    shiny::tags$h3("Your Own Pipeline:", style = "color: #333;"),
+                        #                    shiny::tags$p("Construct your own pipeline and compare it to the ones in the literature."),
+                        #                    shiny::HTML("<br><br>")
+                        #             )
+                        #           ),
                                   
-                                  fluidRow(shiny::HTML("<br><br><center> <h1>Ready to Get Started?</h1> </center> <br>")),
+                        #           fluidRow(shiny::HTML("<br><br><center> <h1>Ready to Get Started?</h1> </center> <br>")),
                                   
-                                  fluidRow(
-                                    column(4),
-                                    column(4,
-                                           tags$div(
-                                             align = "center",
-                                             tags$a("START",
-                                                    onclick = "fakeClick('MA')",
-                                                    class = "btn btn-primary btn-lg"
-                                             )
-                                           )
-                                    ),
-                                    column(4)
-                                  ),
+                        #           fluidRow(
+                        #             column(4),
+                        #             column(4,
+                        #                    tags$div(
+                        #                      align = "center",
+                        #                      tags$a("START",
+                        #                             onclick = "fakeClick('MA')",
+                        #                             class = "btn btn-primary btn-lg"
+                        #                      )
+                        #                    )
+                        #             ),
+                        #             column(4)
+                        #           ),
                                   
-                                  fluidRow(style = "height:25px;")
+                        #           fluidRow(style = "height:25px;")
                                   
-                         ), # Closes the first tabPanel called "Home"
+                        #  ), # Closes the first tabPanel called "Home"
                          
                          
                          # tabPanel("Background", value = "background",
@@ -107,6 +106,56 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                          #          ),
                          #          
                          # ), # Closes tab
+
+
+                         tabPanel("Introduction", value = "home",
+                                shinyjs::useShinyjs(),
+                                tags$head(tags$script(HTML('
+                                    function fakeClick(tabName) {
+                                      var dropdownList = document.getElementsByTagName("a");
+                                      for (var i = 0; i < dropdownList.length; i++) {
+                                        var link = dropdownList[i];
+                                        if(link.getAttribute("data-value") == tabName) {
+                                          link.click();
+                                        }
+                                      }
+                                    }
+
+                                    var sendToShiny = function(label) {
+                                      Shiny.onInputChange("node_clicked", label);
+                                    };
+                                  '))),
+                                fluidRow(
+                                  column(12,
+                                    align = "left",
+                                    shiny::tags$h1("METEOR", style = "color: #333;"),
+                                    shiny::tags$h2("Mastering The Oppressive number of forking paths unfolded by noisy and complex neural data",
+                                                  style = "color: #555; font-weight: normal;"),
+                                    shiny::tags$h3("This interactive shiny app allows you to investigate the multiverse of functional Magnetic Resonance Imaging (fMRI) data preprocessing and analysis based on graph theory. 
+                                                    You can explore the preprocessing choices of published articles. 
+                                                    You can also construct your own preprocessing pipeline and compare it to the ones in the literature.",
+                                                  style = "color: #777; font-weight: normal;"),
+                                    shiny::HTML("<br>"),
+                                    
+                                  )
+                                ),
+                                fluidRow(
+                                  column(6,
+                                    shiny::tags$h3("Click on the node below to get information of each tab:", style = "color: #333;"),
+                                    visNetworkOutput("network_home")
+                                  ),
+                                  column(6,
+                                    align = "left",
+                                    shiny::tags$h3("Navigate to tab:", style = "color: #333;"),
+                                    div(shiny::actionButton("btn_MA", "Database")), br(), 
+                                    div(shiny::actionButton("btn_WH", "Steps")), br(),
+                                    div(shiny::actionButton("btn_fa", "Steps: Options")), br(), 
+                                    div(shiny::actionButton("btn_IP", "Individual Article")), br(), 
+                                    div(shiny::actionButton("btn_DIY", "Your Own Pipeline")), br(), 
+                                    shiny::HTML("<br><br>")
+                                  )
+                                )
+                              ),
                          
                          tabPanel("Database", value = "MA",
                                   mainPanel(
