@@ -26,6 +26,63 @@ server <- function(input, output, session){
                              dom = 'tl'
   ))  # table and lengthMenu options
   
+
+### Introduction page
+   observeEvent(input$btn_MA, {
+    shinyjs::runjs('fakeClick("MA")')
+  })
+  observeEvent(input$btn_WH, {
+    shinyjs::runjs('fakeClick("WH")')
+  })
+  observeEvent(input$btn_fa, {
+    shinyjs::runjs('fakeClick("fa")')
+  })
+  observeEvent(input$btn_IP, {
+    shinyjs::runjs('fakeClick("IP")')
+  })
+  observeEvent(input$btn_DIY, {
+    shinyjs::runjs('fakeClick("DIY")')
+  })
+
+
+output$network_home <- renderVisNetwork({
+  nodes <- data.frame(id = 1:6, 
+                      label = c("METEOR", "Database", "Steps", "Steps: Options", "Individual Expert", "Your Own Pipeline"), 
+                      value = c(40, 40, 40, 40, 40, 40), 
+                      title = "Click to see information", 
+                      shape = "dot")
+  edges <- data.frame(from = c(1, 1, 1, 1, 1), 
+                      to = c(2, 3, 4, 5, 6))
+  visNetwork(nodes, edges, width = "100%") %>%
+    visEvents(click = "function(properties) {
+      var nodeId = properties.nodes[0];
+      if(nodeId) {
+        var label = this.body.data.nodes.get(nodeId).label;
+        window.sendToShiny(label);
+      }
+    }")
+})
+
+observeEvent(input$node_clicked, {
+  # Map the label of the clicked node to the corresponding information
+  info <- switch(input$node_clicked,
+    "Database" = "The multiverse has been identified by an expert survey. All information, the expert information, and the preprocessing steps and their respective options can be found here.",
+    "Steps" = "Explore which preprocessing steps have been used and which combinations and orders are common.",
+    "Steps: Options" = "Explore which options for the respective preprocessing steps have been used by experts.",
+    "Individual Expert" = "Check out preprocessing pipelines and their chosen options for individual expert.",
+    "Your Own Pipeline" = "Construct your own pipeline and compare it to the ones in the database.",
+    "No information available for this node."
+  )
+
+  # Display the information in a modal dialog
+  showModal(modalDialog(
+    title = "Information",
+    info
+  ))
+})
+
+
+
   observe({
     if (!is.null(input$selectA)) {
       # Update choices for selectB based on the value of selectA
