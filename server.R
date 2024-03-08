@@ -113,13 +113,14 @@ observeEvent(input$node_clicked, {
     p_inf, escape = FALSE,
     #extensions = "FixedHeader",
     style="bootstrap",
+    filter = 'top',
     options = list(
       dom = 'Bfrtip',
       pageLength = 20,
       scrollX=TRUE,
       autoWidth = TRUE,
       paging=TRUE,
-      searching=FALSE,
+      searching=TRUE,
       ordering=TRUE
       #fixedHeader = TRUE,
     )
@@ -129,13 +130,14 @@ observeEvent(input$node_clicked, {
     p_inf1, escape = FALSE,
     #extensions = "FixedHeader",
     style="bootstrap",
+    filter = 'top',
     options = list(
       dom = 'Bfrtip',
       pageLength = 20,
       scrollX=TRUE,
       autoWidth = TRUE,
       paging=TRUE,
-      searching=FALSE,
+      searching=TRUE,
       ordering=TRUE
       #fixedHeader = TRUE,
     )
@@ -145,13 +147,14 @@ observeEvent(input$node_clicked, {
     steps,
     #extensions = "FixedHeader",
     style="bootstrap",
+    filter = 'top',
     options = list(
       dom = 'Bfrtip',
       pageLength = 20,
       scrollX=TRUE,
       autoWidth = TRUE,
       paging=TRUE,
-      searching=FALSE,
+      searching=TRUE,
       ordering=TRUE
       #fixedHeader = TRUE,
     )
@@ -160,13 +163,14 @@ observeEvent(input$node_clicked, {
     steps_op,
     #extensions = "FixedHeader",
     style="bootstrap",
+    filter = 'top',
     options = list(
       dom = 'Bfrtip',
       pageLength = 20,
       scrollX=TRUE,
       autoWidth = TRUE,
       paging=TRUE,
-      searching=FALSE,
+      searching=TRUE,
       ordering=TRUE
       #fixedHeader = TRUE,
     )
@@ -227,7 +231,7 @@ observeEvent(input$node_clicked, {
                 scrollX = TRUE,
                 autoWidth = TRUE,
                 paging = TRUE,
-                searching = FALSE,
+                searching = TRUE,
                 ordering = TRUE
                 # fixedHeader = TRUE
               )
@@ -343,7 +347,83 @@ observeEvent(input$node_clicked, {
     
   })
   
-  
+    # # Render the force network plot
+    # output$WP <- renderForceNetwork({
+    #   thr <- input$Thr
+    #   ndWP <- input$Node_WP
+      
+    #   # Adjust the size of the nodes based on their original size
+    #   nodes2$size2 <- nodes2$size/(max(nodes2$size)/50)
+      
+    #   # Set the color of the links based on their value
+    #   links2$color <- "gray"
+    #   links2$color[links2$value>5] <- "blue"
+    #   links2$color[links2$value>20] <- "red"
+      
+    #   # Filter the links based on the threshold value
+    #   links2 <- links2[links2$value > thr, ]
+      
+    #   # Adjust the value of the links for visualization purposes
+    #   links2$value2 <- links2$value/(max(links2$value)/10)
+      
+    #   # Create a new data frame for the filtered links
+    #   links3 <- data.frame(source = match(links2$source, nodes2$Names) - 1,
+    #                        target = match(links2$target, nodes2$Names) - 1,
+    #                        value = links2$value,
+    #                        value2 = links2$value2)
+      
+    #   # Filter the links based on the selected node
+    #   if (ndWP == "All") {
+    #     links_vis <- links3
+    #   } else {
+    #     ndWP <- nodes$Names[nodes$Names_vis==ndWP]
+    #     id_ndWP <- which(nodes2$Names == ndWP)-1
+    #     links_vis <- links3[links3$source == id_ndWP | links3$target == id_ndWP, ]
+    #   }
+      
+    #   # Create a graph from the filtered links and nodes
+    #   g <- igraph::graph_from_data_frame(links_vis, vertices = nodes2, directed = TRUE)
+      
+    #   # Create a 3D plot of the graph using graphjs
+    #   graphjs(g)
+    # })
+
+  ###Plot individual step
+  output$plot_IS_crowd <- renderPlot({
+    # Create the lollipop plot
+    st_dat <- nodes2
+    st_dat$ID <- nodes$ID
+    st_dat$col <- nodes$col
+    st_dat <- st_dat %>%
+      mutate(Names_vis = factor(Names_vis, levels = unique(Names_vis)))  # Convert Names_vis to a factor with original order
+    # Limit y-axis labels to 5 characters
+    #st_dat$Names_or <- stringr::str_sub(st_dat$Names_or, 1, 20)
+    par(mar=c(10,4,4,1)+.1)
+    color_map <- setNames(st_dat$col, st_dat$Groups)
+
+    ggplot(st_dat, aes(x = Names_vis, y = size, color = Groups)) +
+      geom_segment(aes(xend = Names_vis, yend = 0), size = 1) +
+      geom_point(size = 4, alpha = 0.6) +
+      geom_text(aes(label = size), vjust = 0.5, hjust = -0.5, size = 4, color = "black") +
+      scale_color_manual(values = color_map) +  # Use the color map
+      scale_x_discrete(limits = rev(levels(st_dat$Names_vis))) + 
+      theme_light() +
+      theme(
+        panel.grid.major.y = element_blank(),
+        panel.border = element_blank(),
+        axis.ticks.y = element_blank(),
+        text = element_text(size = 12, family = "Arial"),
+        axis.text.y = element_text(),
+      ) +
+      coord_flip() +
+      labs(
+        x = "Steps",
+        y = "Number of papers (out of 220 papers) used the step",
+        color = "Groups"
+      )
+  })
+
+
   output$plot_cv <- renderPlot(
     width = 1000, height = 800, res = 100,
     {
@@ -401,7 +481,7 @@ observeEvent(input$node_clicked, {
                 scrollX = TRUE,
                 autoWidth = TRUE,
                 paging = TRUE,
-                searching = FALSE,
+                searching = TRUE,
                 ordering = TRUE
                 # fixedHeader = TRUE
               )
@@ -426,7 +506,7 @@ observeEvent(input$node_clicked, {
       ggplot(gr_ds, aes(x = name, y = value)) +
         geom_segment(aes(xend = name, yend = 0, color = name), size = 1) +
         geom_point(aes(color = name), size = 4, alpha = 0.6) +
-        geom_text(aes(label = value), vjust = 0.5, hjust = 0.2, size = 4, color = "black") +
+        geom_text(aes(label = value), vjust = 0.5, hjust = -0.5, size = 4, color = "black") +
         scale_color_manual(values = custom_colors, guide = "none") +  # Remove the legend
         theme_light() +
         coord_flip() +
@@ -467,13 +547,14 @@ observeEvent(input$node_clicked, {
     new_tab <- p_inf[id_dec[, 1], ]
     
     datatable(new_tab, escape = FALSE,
+              filter = 'top',
               options = list(
                 dom = 'Bfrtip',
                 pageLength = 10,
                 scrollX = TRUE,
                 autoWidth = TRUE,
                 paging = TRUE,
-                searching = FALSE,
+                searching = TRUE,
                 ordering = TRUE,
                 columnDefs = list(
                   list(width = '300px', targets = c(2,3))
@@ -495,13 +576,14 @@ observeEvent(input$node_clicked, {
     new_tab_IS <- p_inf[id_dec_IS, ]
     
     datatable(new_tab_IS, escape = FALSE,
+              filter = 'top',
               options = list(
                 dom = 'Bfrtip',
                 pageLength = 10,
                 scrollX = TRUE,
                 autoWidth = TRUE,
                 paging = TRUE,
-                searching = FALSE,
+                searching = TRUE,
                 ordering = TRUE,
                 columnDefs = list(
                   list(width = '300px', targets = c(2,3))
@@ -533,7 +615,7 @@ observeEvent(input$node_clicked, {
       ggplot(st_dat, aes(x = Names_or, y = value, color = Groups)) +
         geom_segment(aes(xend = Names_or, yend = 0), size = 1) +
         geom_point(size = 4, alpha = 0.6) +
-        geom_text(aes(label = value), vjust = 0.5, hjust = 0.2, size = 4, color = "black") +
+        geom_text(aes(label = value), vjust = 0.5, hjust = -0.5, size = 4, color = "black") +
         scale_color_manual(values = unique(st_dat$col)) +
         #scale_y_discrete(labels = st_dat$Names_or, breaks = st_dat$Names_or, limits = st_dat$Names_or) +
         theme_light() +
@@ -572,7 +654,7 @@ observeEvent(input$node_clicked, {
       ggplot(st_dat_OR, aes(x = Names_or, y = value, color = Groups)) +
         geom_segment(aes(xend = Names_or, yend = 0), size = 1) +
         geom_point(size = 4, alpha = 0.6) +
-        geom_text(aes(label = value), vjust = 0.5, hjust = 0.2, size = 4, color = "black") +
+        geom_text(aes(label = value), vjust = 0.5, hjust = -0.5, size = 4, color = "black") +
         scale_color_manual(values = unique(st_dat_OR$col)) +
         #scale_y_discrete(labels = st_dat_OR$Names_or, breaks = st_dat_OR$Names_or, limits = st_dat_OR$Names_or) +
         theme_light() +
@@ -695,25 +777,48 @@ observeEvent(input$node_clicked, {
     output$table_DIY2 <- DT::renderDataTable({
       table_DIYfin <- p_inf[row_finDIY, ]
       datatable(table_DIYfin, escape = FALSE,
+                filter = 'top',
                 options = list(
                   dom = 'Bfrtip',
                   pageLength = 20,
                   scrollX = TRUE,
                   autoWidth = TRUE,
                   paging = TRUE,
-                  searching = FALSE,
+                  searching = TRUE,
                   ordering = TRUE
                   # fixedHeader = TRUE
       ))
     })
-    
-    # output$table_DIY2 <- renderTable({
-    #   table_DIYfin <- p_inf[row_finDIY, ]
-    #   table_DIYfin
-    # })
-  })
-  
 
+      ###Output plot time
+      output$plot_time <- renderPlot(
+        width = 1000, height = 400, res = 100,
+        {
+          table_DIYfin <- p_inf[row_finDIY, ]
+
+          # Count the number of papers for each year
+          count_data <- table(table_DIYfin$Year)
+
+          # Create a data frame from the count data
+          count_df <- data.frame(
+            Year = as.numeric(names(count_data)),
+            Count = as.vector(count_data)
+          )
+
+          # Filter the data for the years 2010 to 2023
+          count_df <- count_df[count_df$Year >= 2010 & count_df$Year <= 2023, ]
+
+          # Create the plot
+          ggplot(count_df, aes(x = Year, y = Count)) +
+            geom_bar(stat = "identity", fill = "#21b4b4", width = 0.5) +  # Reduce the width to 0.5
+            scale_x_continuous(breaks = 2010:2023) +  # Set the x-axis breaks
+            expand_limits(x = 2010:2023) +  # Expand the x-axis limits
+            labs(x = "Year", y = "Number of Papers") +
+            theme_minimal()
+      }
+    )
+  
+})
   
   output$table_DIY <- DT::renderDataTable({
     table_data <- tableValues$m
@@ -732,6 +837,6 @@ observeEvent(input$node_clicked, {
       write.csv(table_data, fname)
     }
   )
-  
-  
+    
+
 }

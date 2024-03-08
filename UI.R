@@ -284,8 +284,10 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                            ),  # Closes sidebarPanel
                                                            mainPanel( 
                                                              fluidRow(
-                                                             column(12, textOutput("selected_IS")),
-                                                             column(12, DT::dataTableOutput("table_IS"))
+                                                              column(12, plotOutput("plot_IS_crowd", width = "100%", 
+                                                                      height = "700px")),
+                                                              column(12, textOutput("selected_IS")),
+                                                              column(12, DT::dataTableOutput("table_IS"))
                                                            ),
                                                            )  # Closes the mainPanel
                                                          )  # Closes the sidebarLayout
@@ -488,15 +490,16 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                   shiny::HTML("<h5>Information here</h5>"),
                                                   
                                     ),  # Closes sidebarPanel
-                                    mainPanel( 
-                                      DT::DTOutput("table_DIY"),
-                                      fluidRow(style = "height:100px;"),
-                                      fluidRow(
-                                        column(12, textOutput("counted_paper"))
-                                        
-                                      ),
-                                      DT::DTOutput("table_DIY2"),
-                                    )  # Closes the mainPanel
+                                   mainPanel( 
+                                              DT::DTOutput("table_DIY"),
+                                              fluidRow(style = "height:100px;"),
+                                              fluidRow(
+                                                column(12, textOutput("counted_paper")),
+                                                column(12, plotOutput("plot_time", width = "100%")),
+                                                fluidRow(style = "height:50px;"),  # Add this line
+                                                column(12, DT::DTOutput("table_DIY2")),
+                                              ),
+                                            ) # Closes the mainPanel
                                   )  # Closes the sidebarLayout
                          ),
                          
