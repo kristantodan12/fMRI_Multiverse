@@ -149,7 +149,7 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                     shiny::tags$h3("Navigate to tab:", style = "color: #333;"),
                                     div(shiny::actionButton("btn_MA", "Database")), br(), 
                                     div(shiny::actionButton("btn_WH", "Steps")), br(),
-                                    div(shiny::actionButton("btn_fa", "Steps: Options")), br(), 
+                                    div(shiny::actionButton("btn_fa", "Steps: Parameters")), br(), 
                                     div(shiny::actionButton("btn_IP", "Individual Article")), br(), 
                                     div(shiny::actionButton("btn_DIY", "Your Own Pipeline")), br(), 
                                     shiny::HTML("<br><br>")
@@ -174,7 +174,7 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                   <b>Data extraction:</b> All data was coded by one coder. Other two coders coded the data
                                                   independently for 25 articles each. The codes were then compared and the discrepancies were discussed.
                                                   Information on the preprocessing steps and 
-                                                  their respective options were extracted. <br><br></h5>"),
+                                                  their respective parameters were extracted. <br><br></h5>"),
                                         ),
                                         column(8, 
                                                shiny::HTML("<h3>Defining the space from general fMRI articles</h3>"),
@@ -204,8 +204,8 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                       DT::dataTableOutput("list_steps")
                                     ),
                                     tabPanel(
-                                      "List of Options",
-                                      shiny::HTML("<h5><b>List of identified options</b></h5>"),
+                                      "List of Parameters",
+                                      shiny::HTML("<h5><b>List of identified parameters</b></h5>"),
                                       DT::dataTableOutput("list_decisions")
                                     )
                                     )
@@ -251,7 +251,7 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                                   ),
                                                                   sliderInput("Thr", "Threshold article",
                                                                               min = 0, max = 99,
-                                                                              value = 0
+                                                                              value = 33
                                                                   ),
                                                                   shiny::HTML("<h5>Move the threshold to only see edges used by more artciles than the threshold.</h5>"),
                                                     ),  # Closes sidebarPanel
@@ -356,17 +356,17 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                          ),  # Closes the second tabPanel called "Literature-based Analysis"
                          
                         
-                         tabPanel("Steps: Options", value = "fa",
+                         tabPanel("Steps: Parameters", value = "fa",
                                   sidebarPanel( width = 3,
-                                                shiny::HTML("<h5><b>Explore the distribution of options chosen by
+                                                shiny::HTML("<h5><b>Explore the distribution of parameters chosen by
                                                                      different articles.</b><br></h5>"),
                                                 selectInput("selectGroup",
-                                                            label   = "Explore the chosen options of step:",
+                                                            label   = "Explore the chosen parameters of step:",
                                                             choices =  c(unique(nodes_op$Groups_vis)),
                                                             selected = "Software"
                                                 ),
                                                 shiny::HTML("<h5>Lollipop plot of the number of articles using
-                                                         various options of the selected step.</h5>"),
+                                                         various parameters of the selected step.</h5>"),
                                                 uiOutput("selectDecision"),
                                   ),
                                   mainPanel( 
@@ -407,15 +407,15 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                   )
                                                 ),
                                                 tabPanel(
-                                                  "Option Visualization",
+                                                  "Parameter Visualization",
                                                   sidebarLayout( 
                                                     
                                                     sidebarPanel( width = 3,
-                                                                  shiny::HTML("<h5><b>Visualize the options of preprocessing steps taken by a 
+                                                                  shiny::HTML("<h5><b>Visualize the parameters of preprocessing steps taken by a 
                                                                   specific article.</b><br><br>
                                                                   Select the code of the article in the dropdown below to get 
-                                                                  a visualization of the options of the preprocessing steps and to generate a 
-                                                                  table of the options. You can 
+                                                                  a visualization of the parameters of the preprocessing steps and to generate a 
+                                                                  table of the parameters. You can 
                                                                   find the code of each study in the Database tab.<br></h5>"),
                                                                   selectInput("selectPapers_cv",
                                                                               label   = "Select article:",
@@ -443,11 +443,11 @@ ui <- shinyUI(navbarPage(title = div(img(src="metarep.jpg", height = "50px"), im
                                                   shiny::HTML("<h5><b>Construct your preferred pipeline for fMRI data 
                                                   preprocessing</b><br><br>
                                                   Select the step you want to include with the dropdown below. You may also 
-                                                  select a specific option or any of the available ones. You can add and 
+                                                  select a specific parameter or any of the available ones. You can add and 
                                                   delete steps with the respective buttons. <br><br>
                                                   You can count the number of studies that have used the same pipeline and 
                                                   obtain a table by clicking count. You may specify whether the order of 
-                                                  their pipeline should be considered. If this option is disabled, the a
+                                                  their pipeline should be considered. If this parameter is disabled, the a
                                                   lgorithm will identify all articles that have employed the selected steps 
                                                   regardless of the order. <br></h5>"),
                                                   selectInput("selectStep_DIY",

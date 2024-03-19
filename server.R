@@ -47,7 +47,7 @@ server <- function(input, output, session){
 
 output$network_home <- renderVisNetwork({
   nodes <- data.frame(id = 1:6, 
-                      label = c("METEOR", "Database", "Steps", "Steps: Options", "Individual Expert", "Your Own Pipeline"), 
+                      label = c("METEOR", "Database", "Steps", "Steps: Parameters", "Individual Expert", "Your Own Pipeline"), 
                       value = c(40, 40, 40, 40, 40, 40), 
                       title = "Click to see information", 
                       shape = "dot")
@@ -66,10 +66,10 @@ output$network_home <- renderVisNetwork({
 observeEvent(input$node_clicked, {
   # Map the label of the clicked node to the corresponding information
   info <- switch(input$node_clicked,
-    "Database" = "The multiverse has been identified by an expert survey. All information, the expert information, and the preprocessing steps and their respective options can be found here.",
+    "Database" = "The multiverse has been identified by an expert survey. All information, the expert information, and the preprocessing steps and their respective parameters can be found here.",
     "Steps" = "Explore which preprocessing steps have been used and which combinations and orders are common.",
-    "Steps: Options" = "Explore which options for the respective preprocessing steps have been used by experts.",
-    "Individual Expert" = "Check out preprocessing pipelines and their chosen options for individual expert.",
+    "Steps: Parameters" = "Explore which parameters for the respective preprocessing steps have been used by experts.",
+    "Individual Expert" = "Check out preprocessing pipelines and their chosen parameters for individual expert.",
     "Your Own Pipeline" = "Construct your own pipeline and compare it to the ones in the database.",
     "No information available for this node."
   )
@@ -82,21 +82,11 @@ observeEvent(input$node_clicked, {
 })
 
 
-
-  observe({
-    if (!is.null(input$selectA)) {
-      # Update choices for selectB based on the value of selectA
-      updateSelectInput(session, "selectB", choices = c("All Options", input$selectA))
-    } else {
-      # If selectA is not specified, provide all options for selectB
-      updateSelectInput(session, "selectB", choices = c("Option 1", "Option 2", "Option 3"))
-    }
-  })
   
   output$selected_paper <- renderText({ 
     sel_pap_st <- input$selectPapers
     pap_st <- p_inf[p_inf$Key == sel_pap_st, ]
-    paste("You have selected this paper:", "Author:", pap_st$Author,
+    paste("You have selected this article:", "Author:", pap_st$Author,
           "Title:", pap_st$Title, "Year:", pap_st$Year,
           "Publisher:", pap_st$Publisher)
   })
@@ -104,7 +94,7 @@ observeEvent(input$node_clicked, {
   output$selected_paper_cv <- renderText({ 
     sel_pap_cv <- input$selectPapers_cv
     pap_cv <- p_inf[p_inf$Key == sel_pap_cv, ]
-    paste("You have selected this paper:", "Author:", pap_cv$Author,
+    paste("You have selected this article:", "Author:", pap_cv$Author,
           "Title:", pap_cv$Title, "Year:", pap_cv$Year,
           "Publisher:", pap_cv$Publisher)
   })
@@ -263,13 +253,13 @@ observeEvent(input$node_clicked, {
     }
     
     script <- 'alert("Name: " + d.Names + "\\n" +
-              "Definiton: " + d.Definition + "\\n" + "Used by: " + d.size + "papers out of 220 papers");'
+              "Definiton: " + d.Definition + "\\n" + "Used by: " + d.size + "articles out of 220 articles");'
     
     fn = forceNetwork(Links = links_vis, Nodes = nodes2,
                  Source = "source", Target = "target",
                  Value = "value", NodeID = "Names_vis", linkWidth = JS("function(d) { return Math.sqrt(d.value)/3; }"),
                  Nodesize = "size2", Group = "Groups", radiusCalculation = JS("Math.sqrt(d.nodesize)+6"),
-                 opacity = 0.9, zoom = TRUE, fontSize = 8, arrows = TRUE, legend = TRUE, bounded = TRUE, clickAction = script, 
+                 opacity = 0.9, zoom = TRUE, fontSize = 8, arrows = TRUE, legend = TRUE, bounded = TRUE, clickAction = script, linkDistance = 100, 
                  colourScale = JS('d3.scaleOrdinal().domain(["Software","Structural_preprocessing", "Functional_preprocessing", "Noise_removal", "FC_def", "Graph_analysis"]).
                                   range(["#808080", "#1f77b4", "#2ca02c", "#ff7f0e", "#9467bd", "#e31a1c"])'))
     
@@ -418,7 +408,7 @@ observeEvent(input$node_clicked, {
       coord_flip() +
       labs(
         x = "Steps",
-        y = "Number of papers (out of 220 papers) used the step",
+        y = "Number of articles (out of 220 articles) used the step",
         color = "Groups"
       )
   })
@@ -516,7 +506,7 @@ observeEvent(input$node_clicked, {
           axis.ticks.y = element_blank(),
           text = element_text(size = 12, family = "Arial")
         ) +
-        labs(x = "Options", y = "Number of papers (out of 220 papers)")
+        labs(x = "Parameters", y = "Number of articles (out of 220 articles)")
       
     })
   
@@ -525,7 +515,7 @@ observeEvent(input$node_clicked, {
     opts2 <- which(nodes_op$Groups_vis==st_sel)
     opts_2 <- nodes_op[opts2, ]
     selectInput("selectDecision2",
-                label   = "Select the option",
+                label   = "Select the parameter",
                 choices =  c(opts_2$Names, "Not_used", "Not_reported"),
                 selected = opts_2$Names[1]
     )
@@ -534,7 +524,7 @@ observeEvent(input$node_clicked, {
   output$selected_decision <- renderText({
     dec <- input$selectDecision2
     id_dec <- which(dat_op == dec, arr.ind = T)
-    paste("You have selected option of", input$selectDecision2, "which was used by papers:")
+    paste("You have selected parameter of", input$selectDecision2, "which was used by articles:")
   })
   
   
@@ -629,7 +619,7 @@ observeEvent(input$node_clicked, {
         coord_flip() +
         labs(
           x = "Steps",
-          y = paste("Number of papers (out of 220 papers) used it together with", st_sel),
+          y = paste("Number of articles (out of 220 articles) used it together with", st_sel),
           color = "Groups"
         )
     })
@@ -668,7 +658,7 @@ observeEvent(input$node_clicked, {
         ) +
         labs(
           x = "Steps",
-          y = paste("Number of papers (out of 220 papers) used it after", st_sel_OR),
+          y = paste("Number of articles (out of 220 articles) used it after", st_sel_OR),
           color = "Groups"
         )
     })
@@ -678,14 +668,14 @@ observeEvent(input$node_clicked, {
     opts <- which(nodes_op$Groups_vis==st_sel_DIY)
     opts_ <- nodes_op[opts, ]
     selectInput("selectDecision_DIY2",
-                label   = "Select the option",
+                label   = "Select the parameter",
                 choices =  c(opts_$Names,"Any"),
                 selected = opts_$Names[1]
     )
   })
   
   
-  tableValues <- reactiveValues(df = data.frame(Names = as.character(), Options = as.character(), 
+  tableValues <- reactiveValues(df = data.frame(Names = as.character(), Parameters = as.character(), 
                                                 check.names = FALSE))
   
   
@@ -694,12 +684,12 @@ observeEvent(input$node_clicked, {
     temp <- tableValues$m
     if (length(selected_row) == 0) {
       # If no row is selected, append the new row to the end
-      newRow <- data.frame(Names = input$selectStep_DIY, Options = input$selectDecision_DIY2, 
+      newRow <- data.frame(Names = input$selectStep_DIY, Parameters = input$selectDecision_DIY2, 
                            check.names = FALSE)
       temp <- rbind(temp, newRow)
     } else {
       # If a row is selected, insert the new row after the selected row
-      newRow <- data.frame(Names = input$selectStep_DIY, Options = input$selectDecision_DIY2, 
+      newRow <- data.frame(Names = input$selectStep_DIY, Parameters = input$selectDecision_DIY2, 
                            check.names = FALSE)
       temp <- rbind(temp[1:selected_row, ], newRow, temp[(selected_row + 1):nrow(temp), ])
     }
@@ -724,12 +714,17 @@ observeEvent(input$node_clicked, {
   
   
   observeEvent(input$count, {
-    
+    # # Check if tableValues is empty
+    # if(nrow(tableValues$m) == 0) {
+    #   # If it is, use another table where Names is "Software" and Options is "Any"
+    #   tableValues <- data.frame(Names = "Software", Options = "Any", check.names = FALSE)
+    # }
+
     table_DIY <- tableValues$m
     step_DIY1 <- c(table_DIY$Names)
     step_DIY <- nodes$Names[match(step_DIY1, nodes$Names_vis, nomatch = 0)] 
     #step_DIY <- nodes$Names[sapply(nodes$Names_vis, function(x) x %in% step_DIY1)]
-    option_DIY <- c(table_DIY$Options)
+    option_DIY <- c(table_DIY$Parameters)
     option_DIY <- option_DIY[option_DIY!=""]
     
     ###Find only step first
@@ -758,7 +753,7 @@ observeEvent(input$node_clicked, {
       }
       
       else {
-        st_D1 <- table_DIY$Names[table_DIY$Options == opt_D]
+        st_D1 <- table_DIY$Names[table_DIY$Parameters == opt_D]
         st_D <- nodes$Names[nodes$Names_vis %in% st_D1]
         id_D <- which(dat_op_or[,st_D] == opt_D)
         id_D_all[[na]] <- id_D
@@ -771,7 +766,7 @@ observeEvent(input$node_clicked, {
     count <- length(row_finDIY)
     
     output$counted_paper <- renderText({
-      paste(c("Your selected pipeline is used by", count, "papers (out of 220 papers):"), collapse = " ")
+      paste(c("Your selected pipeline is used by", count, "articles (out of 220 articles):"), collapse = " ")
     })
     
     output$table_DIY2 <- DT::renderDataTable({
@@ -796,7 +791,7 @@ observeEvent(input$node_clicked, {
         {
           table_DIYfin <- p_inf[row_finDIY, ]
 
-          # Count the number of papers for each year
+          # Count the number of papers for each year for the selected pipeline
           count_data <- table(table_DIYfin$Year)
 
           # Create a data frame from the count data
@@ -805,18 +800,30 @@ observeEvent(input$node_clicked, {
             Count = as.vector(count_data)
           )
 
+          # Count the number of papers for each year for all papers
+          total_count_data <- table(p_inf$Year)
+
+          # Create a data frame from the total count data
+          total_count_df <- data.frame(
+            Year = as.numeric(names(total_count_data)),
+            Count = as.vector(total_count_data)
+          )
+
           # Filter the data for the years 2010 to 2023
           count_df <- count_df[count_df$Year >= 2010 & count_df$Year <= 2023, ]
+          total_count_df <- total_count_df[total_count_df$Year >= 2010 & total_count_df$Year <= 2023, ]
 
           # Create the plot
-          ggplot(count_df, aes(x = Year, y = Count)) +
-            geom_bar(stat = "identity", fill = "#21b4b4", width = 0.5) +  # Reduce the width to 0.5
+          ggplot() +
+            geom_bar(data = total_count_df, aes(x = Year, y = Count), stat = "identity", fill = "gray", alpha = 0.3, width = 0.5) +
+            geom_line(data = count_df, aes(x = Year, y = Count), color = "#0703e070", size = 1) +
             scale_x_continuous(breaks = 2010:2023) +  # Set the x-axis breaks
             expand_limits(x = 2010:2023) +  # Expand the x-axis limits
-            labs(x = "Year", y = "Number of Papers") +
-            theme_minimal()
-      }
-    )
+            labs(x = "Year", y = "Number of articles") +
+            theme_minimal() +
+            theme(panel.grid = element_blank())
+        }
+      )
   
 })
   
