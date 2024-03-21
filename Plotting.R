@@ -20,6 +20,15 @@ rm(list = ls())
 #########ReadData############
 #############################
 dat <- read_excel("Database.xlsx", sheet = "Coding_steps")
+#Put Software as the first step of all papers
+# Find rows where Step1 is not "Software"
+rows_to_change <- dat$Step1 != "Software"
+
+# For each row to change, shift values to the right and set Step1 to "Software"
+for (i in which(rows_to_change)) {
+  n <- ncol(dat)
+  dat[i, 2:n] <- c("Software", dat[i, 2:(n-1)])
+}
 dat_prep1 <- select(dat, contains("Step"))
 dat_prep1[dat_prep1 == ""] <- NA 
 steps <- read_excel("Database.xlsx", sheet = "All_steps")
@@ -37,113 +46,116 @@ cn_p_inf <- colnames(p_inf)
 ###Visualization of steps###
 ############################
 ###Single paper visualization
-list_df <- list()
-for (p in 1:length(dat$Key)){
-  ppr <- dat_prep1[p, ]
-  dat_prep <- ppr
-  source <- c(dat_prep$Step1, dat_prep$Step2, dat_prep$Step3, dat_prep$Step4, dat_prep$Step5,
-              dat_prep$Step6, dat_prep$Step7, dat_prep$Step8, dat_prep$Step9, dat_prep$Step10,
-              dat_prep$Step11, dat_prep$Step12, dat_prep$Step13, dat_prep$Step14, dat_prep$Step15,
-              dat_prep$Step16, dat_prep$Step17, dat_prep$Step18, dat_prep$Step19, dat_prep$Step20,
-              dat_prep$Step21, dat_prep$Step22, dat_prep$Step23, dat_prep$Step24, dat_prep$Step25,
-              dat_prep$Step26, dat_prep$Step27, dat_prep$Step28, dat_prep$Step29)
-  target <- c(dat_prep$Step2, dat_prep$Step3, dat_prep$Step4, dat_prep$Step5,
-              dat_prep$Step6, dat_prep$Step7, dat_prep$Step8, dat_prep$Step9, dat_prep$Step10,
-              dat_prep$Step11, dat_prep$Step12, dat_prep$Step13, dat_prep$Step14, dat_prep$Step15,
-              dat_prep$Step16, dat_prep$Step17, dat_prep$Step18, dat_prep$Step19, dat_prep$Step20,
-              dat_prep$Step21, dat_prep$Step22, dat_prep$Step23, dat_prep$Step24, dat_prep$Step25,
-              dat_prep$Step26, dat_prep$Step27, dat_prep$Step28, dat_prep$Step29, dat_prep$Step30)
-  dat2 <- data.frame(table(source, target))
-  value <- c()
-  for (i in 1:length(source)){
-    s <- source[i]
-    if (is.na(s)){
-      value[i] <- 0
-    }
-    else {
-      t <- target[i]
-      if (is.na(t)){
-        value[i] <- 0
-      }
-      else {
-        ind <- which(dat2$source %in% s & dat2$target %in% t)
-        value[i] <- dat2$Freq[ind]
-      }
-    }
-  }
+# list_df <- list()
+# for (p in 1:length(dat$Key)){
+#   ppr <- dat_prep1[p, ]
+#   dat_prep <- ppr
+#   source <- c(dat_prep$Step1, dat_prep$Step2, dat_prep$Step3, dat_prep$Step4, dat_prep$Step5,
+#               dat_prep$Step6, dat_prep$Step7, dat_prep$Step8, dat_prep$Step9, dat_prep$Step10,
+#               dat_prep$Step11, dat_prep$Step12, dat_prep$Step13, dat_prep$Step14, dat_prep$Step15,
+#               dat_prep$Step16, dat_prep$Step17, dat_prep$Step18, dat_prep$Step19, dat_prep$Step20,
+#               dat_prep$Step21, dat_prep$Step22, dat_prep$Step23, dat_prep$Step24, dat_prep$Step25,
+#               dat_prep$Step26, dat_prep$Step27, dat_prep$Step28, dat_prep$Step29)
+#   target <- c(dat_prep$Step2, dat_prep$Step3, dat_prep$Step4, dat_prep$Step5,
+#               dat_prep$Step6, dat_prep$Step7, dat_prep$Step8, dat_prep$Step9, dat_prep$Step10,
+#               dat_prep$Step11, dat_prep$Step12, dat_prep$Step13, dat_prep$Step14, dat_prep$Step15,
+#               dat_prep$Step16, dat_prep$Step17, dat_prep$Step18, dat_prep$Step19, dat_prep$Step20,
+#               dat_prep$Step21, dat_prep$Step22, dat_prep$Step23, dat_prep$Step24, dat_prep$Step25,
+#               dat_prep$Step26, dat_prep$Step27, dat_prep$Step28, dat_prep$Step29, dat_prep$Step30)
+#   dat2 <- data.frame(table(source, target))
+#   value <- c()
+#   for (i in 1:length(source)){
+#     s <- source[i]
+#     if (is.na(s)){
+#       value[i] <- 0
+#     }
+#     else {
+#       t <- target[i]
+#       if (is.na(t)){
+#         value[i] <- 0
+#       }
+#       else {
+#         ind <- which(dat2$source %in% s & dat2$target %in% t)
+#         value[i] <- dat2$Freq[ind]
+#       }
+#     }
+#   }
   
-  links <- data.frame(source = source,
-                      target = target,
-                      value  = value)
-  links <- na.omit(links)
-  links <- unique(links)
+#   links <- data.frame(source = source,
+#                       target = target,
+#                       value  = value)
+#   links <- na.omit(links)
+#   links <- unique(links)
   
-  nodes <- steps
-  nodes$Groups.type <- as.factor(nodes$Groups)
-  nodes[sapply(nodes, is.factor)] <- data.matrix(nodes[sapply(nodes, is.factor)])
+#   nodes <- steps
+#   nodes$Groups.type <- as.factor(nodes$Groups)
+#   nodes[sapply(nodes, is.factor)] <- data.matrix(nodes[sapply(nodes, is.factor)])
   
-  links$IDsource <- match(links$source, nodes$Names) - 1
-  links$IDtarget <- match(links$target, nodes$Names) - 1
-  links <- na.omit(links)
-  list_df[[p]] <- links
-}
+#   links$IDsource <- match(links$source, nodes$Names) - 1
+#   links$IDtarget <- match(links$target, nodes$Names) - 1
+#   links <- na.omit(links)
+#   list_df[[p]] <- links
+# }
 
-nodes <- steps
-nodes$ID <- c(1:nrow(steps))
-nodes$Groups.type <- as.factor(nodes$Groups)
-nodes[sapply(nodes, is.factor)] <- data.matrix(nodes[sapply(nodes, is.factor)])
-clrs <- c("mediumpurple3", "darkolivegreen3", "firebrick", "darkorange", "dodgerblue")
-nodes$col <- clrs[nodes$Groups.type]
-nodes$ID <- c(1:nrow(steps))
+# nodes <- steps
+# nodes$ID <- c(1:nrow(steps))
+# nodes$Groups.type <- as.factor(nodes$Groups)
+# nodes[sapply(nodes, is.factor)] <- data.matrix(nodes[sapply(nodes, is.factor)])
+# clrs <- c("mediumpurple3", "darkolivegreen3", "firebrick", "darkorange", "dodgerblue")
+# nodes$col <- clrs[nodes$Groups.type]
+# nodes$ID <- c(1:nrow(steps))
 
-sel_p <- 1
-id_p <- which(dat$Key == sel_p)
-links_ind <- list_df[[id_p]]
-g <- graph_from_data_frame(d=links_ind, vertices=nodes, directed=T)
-first_nd <- links_ind$source[1]
-id_fn <- which(nodes$Names == first_nd)
-V(g)$color <- nodes$col
-V(g)$color[id_fn] <- "black"
-tkid <- tkplot(g)
-cd <- tkplot.getcoords(tkid)
-saveRDS(cd, file = "coordinates_steps_aggregated.RDS")
-cdi <- readRDS("coordinates_steps_shiny3.RDS")
-tk_set_coords(tkid, cdi)
+# sel_p <- 1
+# id_p <- which(dat$Key == sel_p)
+# links_ind <- list_df[[id_p]]
+# g <- graph_from_data_frame(d=links_ind, vertices=nodes, directed=T)
+# first_nd <- links_ind$source[1]
+# id_fn <- which(nodes$Names == first_nd)
+# V(g)$color <- nodes$col
+# V(g)$color[id_fn] <- "black"
+# tkid <- tkplot(g)
+# cd <- tkplot.getcoords(tkid)
+# saveRDS(cd, file = "coordinates_steps_aggregated.RDS")
+# cdi <- readRDS("coordinates_steps_shiny3.RDS")
+# tk_set_coords(tkid, cdi)
 
-plot(g, 
-     layout = cdi,
-     vertex.frame.color = "black",                 # Node border color
-     vertex.shape="circle",                        # One of “none”, “circle”, “square”, “csquare”, “rectangle” “crectangle”, “vrectangle”, “pie”, “raster”, or “sphere”
-     vertex.size=10,                               # Size of the node (default is 15)
+# plot(g, 
+#      layout = cdi,
+#      vertex.frame.color = "black",                 # Node border color
+#      vertex.shape="circle",                        # One of “none”, “circle”, “square”, “csquare”, “rectangle” “crectangle”, “vrectangle”, “pie”, “raster”, or “sphere”
+#      vertex.size=10,                               # Size of the node (default is 15)
      
-     # === vertex label
-     vertex.label.color="black",
-     vertex.label.font=2,                          # Font: 1 plain, 2 bold, 3, italic, 4 bold italic, 5 symbol
-     vertex.label.cex=0.7,                           # Font size (multiplication factor, device-dependent)
-     vertex.label.dist=0,                          # Distance between the label and the vertex
-     vertex.label.degree=0 ,                       # The position of the label in relation to the vertex (use pi)
+#      # === vertex label
+#      vertex.label.color="black",
+#      vertex.label.font=2,                          # Font: 1 plain, 2 bold, 3, italic, 4 bold italic, 5 symbol
+#      vertex.label.cex=0.7,                           # Font size (multiplication factor, device-dependent)
+#      vertex.label.dist=0,                          # Distance between the label and the vertex
+#      vertex.label.degree=0 ,                       # The position of the label in relation to the vertex (use pi)
      
-     # === Edge
-     edge.color="blue",                            # Edge color
-     edge.width=1,                                 # Edge width, defaults to 1
-     edge.arrow.size=0.6,                            # Arrow size, defaults to 1
-     edge.arrow.width=3,                           # Arrow width, defaults to 1
-     edge.lty="solid",                             # Line type, could be 0 or “blank”, 1 or “solid”, 2 or “dashed”, 3 or “dotted”, 4 or “dotdash”, 5 or “longdash”, 6 or “twodash”
-     edge.curved=0.3    ,                          # Edge curvature, range 0-1 (FALSE sets it to 0, TRUE to 0.5)
-     asp = 0.7
-)
+#      # === Edge
+#      edge.color="blue",                            # Edge color
+#      edge.width=1,                                 # Edge width, defaults to 1
+#      edge.arrow.size=0.6,                            # Arrow size, defaults to 1
+#      edge.arrow.width=3,                           # Arrow width, defaults to 1
+#      edge.lty="solid",                             # Line type, could be 0 or “blank”, 1 or “solid”, 2 or “dashed”, 3 or “dotted”, 4 or “dotdash”, 5 or “longdash”, 6 or “twodash”
+#      edge.curved=0.3    ,                          # Edge curvature, range 0-1 (FALSE sets it to 0, TRUE to 0.5)
+#      asp = 0.7
+# )
 
-legend(x=-1, y=-1.1, c("FC definition","Functional_preprocessing", "Graph_analysis", "Noise_removal", "Structural_preprocessing"), pch=21,
-       col="#777777", pt.bg=clrs, pt.cex=2, cex=1, bty="n", ncol=1)
+# legend(x=-1, y=-1.1, c("FC definition","Functional_preprocessing", "Graph_analysis", "Noise_removal", "Structural_preprocessing"), pch=21,
+#        col="#777777", pt.bg=clrs, pt.cex=2, cex=1, bty="n", ncol=1)
 
 
 ###Aggregated Graph visualization
 ###Defining nodes
 nodes <- steps
+# Get the indices of the rows in p_inf where Year is between 2010 and 2017 #uncomment for subset of graph
+indices <- which(p_inf$Year %in% 2018:2023)
+dat <- dat[indices, ]
 #nodes <- subset(nodes,Groups == "Structural_preprocessing" | Groups == "Functional_preprocessing" | Groups == "Noise_removal")
 nodes$Groups.type <- as.factor(nodes$Groups)
 nodes[sapply(nodes, is.factor)] <- data.matrix(nodes[sapply(nodes, is.factor)])
-clrs <- c("mediumpurple3", "darkolivegreen3", "firebrick", "darkorange", "dodgerblue")
+clrs <-  c("mediumpurple3", "darkolivegreen3", "firebrick", "darkorange", "gray","dodgerblue")
 nodes$size <- 0
 for (nd in 1:nrow(nodes)){
   nd_p <- nodes$Names[nd]
@@ -167,48 +179,78 @@ for (pp in 1:nrow(links)){
 
 nodes2 <- nodes
 nodes2$size <- nodes2$size/(max(nodes2$size)/15)
-links2 <- subset(links,value > 0 )
+links2 <- subset(links,value > 15) #16 for 2010 to 2017
 links2$color <- "gray"
 links2$color[links2$value>5] <- "blue"
 links2$color[links2$value>20] <- "red"
-links2$value <- links2$value/(max(links2$value)/10)
+links2$value <- links2$value/(max(links2$value)/5)
 g <- graph_from_data_frame(d=links2, vertices=nodes2, directed=T)
 V(g)$color <- clrs[V(g)$Groups.type]
 V(g)$width <- (nodes2$size)
 V(g)$label <- nodes2$Names_vis
 E(g)$width <- (links2$value)
 E(g)$color <- links2$color
-tkid <- tkplot(g)
+# Get the indices of the isolated nodes
+isolated_nodes <- which(degree(g) == 0)
+# Remove isolated nodes from the graph
+g <- delete.vertices(g, isolated_nodes) #uncomment for subset of graph
+#tkid <- tkplot(g)
 #cd <- tkplot.getcoords(tkid)
 #saveRDS(cd, file = "coordinates_steps_aggregated3.RDS")
 cdi <- readRDS("coordinates_steps_aggregated3.RDS")
+# Remove corresponding rows from the layout
+cdi <- cdi[-isolated_nodes, ] #uncomment for subset of graph
 #cdi <- cdi[1:nrow(cdi)-1, ]
 #tk_set_coords(tkid, cdi)
-dev.new(width=1000, height=700, unit="px")
+# Create the plot
+pdf("network_plot.pdf")
 plot(g, 
      layout = cdi,
-     #vertex.frame.color = "black",                 # Node border color
-     #vertex.shape="circle",                        # One of “none”, “circle”, “square”, “csquare”, “rectangle” “crectangle”, “vrectangle”, “pie”, “raster”, or “sphere”
-     #vertex.size=10,                               # Size of the node (default is 15)
-     
-     # === vertex label
      vertex.label.color="black",
-     vertex.label.font=2,                          # Font: 1 plain, 2 bold, 3, italic, 4 bold italic, 5 symbol
-     vertex.label.cex=0.95,                           # Font size (multiplication factor, device-dependent)
-     vertex.label.dist=0,                          # Distance between the label and the vertex
-     vertex.label.degree=0 ,                       # The position of the label in relation to the vertex (use pi)
-     
-     # === Edge
-     #edge.color="blue",                            # Edge color
-     #edge.width=1,                                 # Edge width, defaults to 1
-     edge.arrow.size=0.6,                            # Arrow size, defaults to 1
-     edge.arrow.width=1,                           # Arrow width, defaults to 1
-     edge.lty="solid",                             # Line type, could be 0 or “blank”, 1 or “solid”, 2 or “dashed”, 3 or “dotted”, 4 or “dotdash”, 5 or “longdash”, 6 or “twodash”
-     edge.curved=0.3    ,                          # Edge curvature, range 0-1 (FALSE sets it to 0, TRUE to 0.5)
+     vertex.label.font=1,
+     vertex.label.cex=0.7, 
+     vertex.label.dist=0,
+     vertex.label.degree=0,
+     edge.arrow.size=0.7,
+     edge.arrow.width=1,
+     edge.lty="solid",
+     edge.curved=0.3,
      asp = 0.7
 )
+# Close the PDF file
+dev.off()
+# plot(g, 
+#      layout = cdi,
+#      #vertex.frame.color = "black",                 # Node border color
+#      #vertex.shape="circle",                        # One of “none”, “circle”, “square”, “csquare”, “rectangle” “crectangle”, “vrectangle”, “pie”, “raster”, or “sphere”
+#      #vertex.size=10,                               # Size of the node (default is 15)
+     
+#      #vertex label
+#      vertex.label.color="black",
+#      vertex.label.font=2,                          # Font: 1 plain, 2 bold, 3, italic, 4 bold italic, 5 symbol
+#      vertex.label.cex=0.95,                           # Font size (multiplication factor, device-dependent)
+#      vertex.label.dist=0,                          # Distance between the label and the vertex
+#      vertex.label.degree=0 ,                       # The position of the label in relation to the vertex (use pi)
+     
+#      #Edge
+#      #edge.color="blue",                            # Edge color
+#      #edge.width=1,                                 # Edge width, defaults to 1
+#      edge.arrow.size=1,                            # Arrow size, defaults to 1
+#      edge.arrow.width=1,                           # Arrow width, defaults to 1
+#      edge.lty="solid",                             # Line type, could be 0 or “blank”, 1 or “solid”, 2 or “dashed”, 3 or “dotted”, 4 or “dotdash”, 5 or “longdash”, 6 or “twodash”
+#      edge.curved=0.3    ,                          # Edge curvature, range 0-1 (FALSE sets it to 0, TRUE to 0.5)
+#      asp = 0.7
+# )
 
-saveWidget(visIgraph(g, layout = "layout_nicely"), file = "test.html")
+
+
+
+###Checking duplicated rows
+dat_without_key <- dat[, !(names(dat) %in% "Key")]
+duplicated_rows <- dat[duplicated(dat_without_key) | duplicated(dat_without_key, fromLast = TRUE), ]
+print(duplicated_rows)
+
+#saveWidget(visIgraph(g, layout = "layout_nicely"), file = "test.html")
 
 
 
@@ -440,10 +482,11 @@ nr_mat2 <- data.frame(steps_op2,report,values_rep)
 nr_mat2$steps_op_vis <- c(rep(unique(steps_op$Groups_vis),3))
 ggplot(nr_mat2, aes(fill=report, y=steps_op_vis, x=values_rep)) + 
      geom_bar(position="stack", stat="identity") +
-     scale_fill_manual(values=c('gray', 'dark red', 'dark green')) +
-     theme(text = element_text(size = 14)) 
-     #ggtitle("Variability on reporting options")
-ggsave("reporting_options.png")
+     scale_fill_manual(values=c('gray', '#793d3d', '#446644')) +
+     theme(text = element_text(size = 30), 
+        axis.title.x = element_text(size = 30),  # Increase the size of the x axis label
+        axis.title.y = element_text(size = 30)) 
+ggsave("reporting_options.pdf")
 
 
 ####################
@@ -476,7 +519,7 @@ nodes3 <- nodes3 %>%
 ggplot(nodes3, aes(x=Names_or, y=degree)) +
   geom_segment( aes(x=Names_or, xend=Names_or, y=0, yend=degree), color=nodes3$col) +
   geom_point( color=nodes3$col, size=4, alpha=0.6) +
-  geom_text(aes(label = degree), vjust = 0.5, hjust = 0.2, size = 4, color = "black") +
+  geom_text(aes(label = degree), vjust = 0.5, hjust = -0.5, size = 4, color = "black") +
   theme_light() +
   coord_flip() +
   theme(
@@ -484,9 +527,10 @@ ggplot(nodes3, aes(x=Names_or, y=degree)) +
     panel.border = element_blank(),
     axis.ticks.y = element_blank()
   ) +
-  theme(text=element_text(size=12,  family="Times New Roman")) +
+  theme(text=element_text(size=18,  family="Times New Roman")) +
   labs(x = "Steps", y = "Degree")
-ggsave("degree.png", width = 15, height = 23, units = "cm", dpi = 300)
+#ggsave("degree.png", width = 15, height = 23, units = "cm", dpi = 300)
+ggsave("degree.pdf",width = 7, height = 13)
 
 ###With polar plot
 nodes3_SP <- subset(nodes3, Groups == "Structural_preprocessing")
@@ -612,59 +656,205 @@ orca(fig, "degree.png")
 ###Combination and order###
 ###########################
 ##Note that this only involves group of functional preprocessing and noise removal
-nodes4 <- nodes
-st1 <- data.frame(nodes$Names[nodes4$Groups.type == 2])
-st2 <- data.frame(nodes$Names[nodes4$Groups.type == 4])
-colnames(st1) <- "Names"
-colnames(st2) <- "Names"
-st <- rbind(st1, st2)
-mat_yn <- matrix(0, nrow = length(st$Names), ncol = length(st$Names))
-for (i in 1:length(st$Names)){
-  sti <- st$Names[i]
-  id_i <- which(dat == sti, arr.ind = T)
-  for (j in 1:length(st$Names)){
-    stj <- st$Names[j]
-    id_j <- which(dat == stj, arr.ind = T)
-    use_both <- merge(id_i, id_j, by = "row")
-    n_p <- length(use_both$row)
-    mat_yn[i,j] <- n_p
-  }
-}
-colnames(mat_yn) <- st$Names
-rownames(mat_yn) <- st$Names
-
-###Steps
-mat_or <- matrix(0, nrow = length(st$Names), ncol = length(st$Names))
-for (i in 1:length(st$Names)){
-  sti <- st$Names[i]
-  id_i <- which(dat == sti, arr.ind = T)
-  for (j in 1:length(st$Names)){
-    stj <- st$Names[j]
-    id_j <- which(dat == stj, arr.ind = T)
-    use_both <- merge(id_i, id_j, by = "row")
-    ord <- use_both$col.x - use_both$col.y
-    i_first <- length(which(ord<0))
-    mat_or[i,j] <- i_first
-  }
-}
-colnames(mat_or) <- st$Names
-rownames(mat_or) <- st$Names
+mat_yn <- readRDS("mat_yn.RDS")
+mat_or <- readRDS("mat_or.RDS")
 
 ##Combination
-st_sel <- "F-ICA_AROMA"
+st_sel <- "GlobalSigRegress"
 st_dat <- mat_yn[st_sel, ]
-par(mar=c(15,4,4,1)+.1)
-par(family = "times")
-barplot(st_dat, main="Distribution", ylab="Frequency", names=st$Names, las=2, cex.axis=1, cex.names=1, col = "darkolivegreen3")
+st_dat <- data.frame(st_dat)
+st_dat$name <- row.names(st_dat)
+colnames(st_dat) <- c("value", "name")
+st_dat$Groups <- nodes$Groups
+st_dat$Groups <- factor(st_dat$Groups, levels = unique(st_dat$Groups))
+st_dat$col <- nodes$col
+st_dat <- st_dat %>%
+  mutate(Names_or = fct_reorder(name, desc(nodes$ID)))
+label_colors <- ifelse(st_dat$Names_or == st_sel, "red", "black")
+names(label_colors) <- st_dat$Names_or
+par(mar=c(10,4,4,1)+.1)
 
+# Create the ggplot
+p <-  ggplot(st_dat, aes(x = Names_or, y = value, color = Groups)) +
+      geom_segment(aes(xend = Names_or, yend = 0), size = 1) +
+      geom_point(size = 4, alpha = 0.6) +
+      geom_text(aes(label = value), vjust = 0.5, hjust = -0.5, size = 4, color = "black", family = "Times New Roman") +
+      scale_color_manual(values = unique(st_dat$col)) +
+      theme_light() +
+      theme(
+        panel.grid.major.y = element_blank(),
+        panel.border = element_blank(),
+        axis.ticks.y = element_blank(),
+        text = element_text(size = 12, family = "Times New Roman"),
+        axis.text.y = element_text(color = label_colors[st_dat$Names_or]),
+      ) +
+      coord_flip() +
+      labs(
+        x = "Steps",
+        y = paste("Number of papers (out of 220 papers) used it together with", st_sel),
+        color = "Groups"
+      )
+
+# Save the plot as a PDF
+ggsave("GSR_comb.pdf", plot = p, width = 4, height = 7)
 
 ##Order
-st_sel_OR <- "F-Alignment/Head_motion_est"
+st_sel_OR <- "MotionRegress"
 st_dat_OR <- mat_or[st_sel_OR, ]
-par(mar=c(15,4,4,1)+.1)
-barplot(st_dat_OR, main="Distribution", ylab="Frequency", names=st$Names, las=2, cex.axis=1, cex.names=1, col = "darkolivegreen3")
+st_dat_OR <- data.frame(st_dat_OR)
+st_dat_OR$name <- row.names(st_dat_OR)
+colnames(st_dat_OR) <- c("value", "name")
+st_dat_OR$Groups <- nodes$Groups
+st_dat_OR$Groups <- factor(st_dat_OR$Groups, levels = unique(st_dat_OR$Groups))
+st_dat_OR$col <- nodes$col
+st_dat_OR <- st_dat_OR %>%
+  mutate(Names_or = fct_reorder(name, desc(nodes$ID)))
+label_colors <- ifelse(st_dat_OR$Names_or == st_sel_OR, "red", "black")
+names(label_colors) <- st_dat_OR$Names_or
+par(mar=c(10,4,4,1)+.1)
+p <- ggplot(st_dat_OR, aes(x = Names_or, y = value, color = Groups)) +
+  geom_segment(aes(xend = Names_or, yend = 0), size = 1) +
+  geom_point(size = 4, alpha = 0.6) +
+  geom_text(aes(label = value), vjust = 0.5, hjust = -0.5, size = 4, color = "black", family = "Times New Roman") +
+  scale_color_manual(values = unique(st_dat_OR$col)) +
+  theme_light() +
+  coord_flip() +
+  theme(
+    panel.grid.major.y = element_blank(),
+    panel.border = element_blank(),
+    axis.ticks.y = element_blank(),
+    text = element_text(size = 12, family = "Times New Roman"),
+    axis.text.y = element_text(color = label_colors[st_dat_OR$Names_or]),
+  ) +
+  labs(
+    x = "Steps",
+    y = paste("Number of papers (out of 220 papers) used it after", st_sel_OR),
+    color = "Groups"
+  )
 
+# Save the plot as a PDF
+ggsave("motion_order.pdf", plot = p, width = 4, height = 7)
 
+#######################
+###Temporal Analysis###
+#######################
+
+createCountDf <- function(table_DIY, p_inf) {
+  step_DIY1 <- c(table_DIY$Names)
+  step_DIY <- nodes$Names[match(step_DIY1, nodes$Names_vis, nomatch = 0)] 
+  option_DIY <- c(table_DIY$Options)
+  option_DIY <- option_DIY[option_DIY!=""]
+
+  # Find only step first
+  order_not <- TRUE
+  if (order_not == T){
+    row_stepDIY <- which(apply(dat, 1, function(x1) {
+      if (length(x1) < length(step_DIY)) {
+        return(FALSE)
+      }
+      idx <- match(step_DIY, x1)
+      all(!is.na(idx)) && all(diff(idx) == 1)
+    }))
+  }
+  else {
+    row_stepDIY <- which(apply(dat, 1, function(x2) all(step_DIY %in% x2)))
+  }
+
+  paper_opt <- dat_op[row_stepDIY, ]
+
+  # Find also with option
+  id_D_all <- list()
+  for (na in 1:length(option_DIY)){
+    opt_D <- option_DIY[na]
+    if (opt_D == "Any"){
+      id_D_all[[na]] <- 1:nrow(dat_op_or)
+    }
+    else {
+      st_D1 <- table_DIY$Names[table_DIY$Options == opt_D]
+      st_D <- nodes$Names[nodes$Names_vis %in% st_D1]
+      id_D <- which(dat_op_or[,st_D] == opt_D)
+      id_D_all[[na]] <- id_D
+    }
+  }
+
+  vals <- unlist(id_D_all)
+  row_optDIY <- which(tabulate(vals) >= length(id_D_all))
+  row_finDIY <- intersect(row_stepDIY, row_optDIY)
+  count <- length(row_finDIY)
+
+  table_DIYfin <- p_inf[row_finDIY, ]
+
+  # Count the number of papers for each year for the selected pipeline
+  count_data <- table(table_DIYfin$Year)
+
+  # Create a data frame from the count data
+  count_df <- data.frame(
+    Year = as.numeric(names(count_data)),
+    Count = as.vector(count_data)
+  )
+
+  # Filter the data for the years 2010 to 2023
+  count_df <- count_df[count_df$Year >= 2010 & count_df$Year <= 2023, ]
+
+  return(count_df)
+}
+
+table_DIY1 <- data.frame(Names = "MotionRegress", Options = "6p", check.names = FALSE)
+table_DIY2 <- data.frame(Names = "MotionRegress", Options = "12p", check.names = FALSE)
+table_DIY3 <- data.frame(Names = "MotionRegress", Options = "24p", check.names = FALSE)
+table_DIY4 <- data.frame(Names = "MotionRegress", Options = "36p", check.names = FALSE)
+table_DIY5 <- data.frame(Names = "AtlasDefine", Options = "Voxel_wise", check.names = FALSE)
+table_DIY6 <- data.frame(Names = "AtlasDefine", Options = "Power", check.names = FALSE)
+table_DIY7 <- data.frame(Names = "AtlasDefine", Options = "AAL1", check.names = FALSE)
+table_DIY8 <- data.frame(Names = "AtlasDefine", Options = "ICA", check.names = FALSE)
+table_ref <- data.frame(Names = "Software", Options = "Any", check.names = FALSE)
+
+# Assume you have four data frames table_DIY1, table_DIY2, table_DIY3, table_DIY4
+# You need to create count data frames for each of them
+count_df1 <- createCountDf(table_DIY1, p_inf)
+count_df2 <- createCountDf(table_DIY2, p_inf)
+count_df3 <- createCountDf(table_DIY3, p_inf)
+count_df4 <- createCountDf(table_DIY4, p_inf)
+count_df5 <- createCountDf(table_DIY5, p_inf)
+count_df6 <- createCountDf(table_DIY6, p_inf)
+count_df7 <- createCountDf(table_DIY7, p_inf)
+count_df8 <- createCountDf(table_DIY8, p_inf)
+count_ref <- createCountDf(table_ref, p_inf)
+
+# Combine all count data frames into one
+count_df_all <- rbind(
+  transform(count_df1, Option = "6p"),
+  transform(count_df2, Option = "12p"),
+  transform(count_df3, Option = "24p"),
+  transform(count_df4, Option = "36p"),
+  transform(count_df5, Option = "Voxel wise"),
+  transform(count_df6, Option = "Power"),
+  transform(count_df7, Option = "AAL1"),
+  transform(count_df8, Option = "ICA")
+)
+
+library(RColorBrewer)
+
+# Get 8 colors from the YlOrRd color map
+colors <- rev(brewer.pal(4, "YlOrRd"))
+colors2 <- rev(brewer.pal(4, "BuPu"))
+
+# Create the plot
+p <- ggplot() +
+  geom_bar(data = count_ref, aes(x = Year, y = Count), stat = "identity", fill = "gray", alpha = 0.3, width = 0.5) +
+  geom_line(data = count_df_all[count_df_all$Option %in% c("6p", "12p", "24p", "36p"), ], aes(x = Year, y = Count, color = Option), size = 1) +
+  geom_line(data = count_df_all[count_df_all$Option %in% c("Voxel wise", "Power", "AAL1", "ICA"), ], aes(x = Year, y = Count, color = Option), size = 1) +
+  scale_color_manual(values = c(setNames(colors, c("6p", "12p", "24p", "36p")), setNames(colors2, c("Voxel wise", "Power", "AAL1", "ICA")))) +
+  scale_x_continuous(breaks = 2010:2023) +  # Set the x-axis breaks
+  expand_limits(x = 2010:2023) +  # Expand the x-axis limits
+  labs(x = "Year", y = "Number of Papers", color = "Option") +
+  theme_minimal() +
+  theme(panel.grid = element_blank(),  # Remove the grid
+        text = element_text(size = 20),  # Increase the size of the text
+        legend.position = "bottom")  # Position the legend at the bottom
+
+# Save the plot as a PDF
+ggsave("temporal motion.pdf", plot = p, width = 10, height = 7)
 
 
 
@@ -672,93 +862,28 @@ barplot(st_dat_OR, main="Distribution", ylab="Frequency", names=st$Names, las=2,
 ###Variability of options###
 ############################
 ###Read data
-dat_op_or <- read.csv(file = 'coding_options_or.csv')
-dat_op_or[dat_op_or == ""] <- NA 
-colnames(dat_op_or)[3] <- "F-Removal_Init_Vol" ### - becomes .
-colnames(dat_op_or)[4] <- "F-Alignment/Head_motion_est"
-colnames(dat_op_or)[5] <- "F-Spatial_normalization"
-colnames(dat_op_or)[6] <- "F-Spatial_smooth"
-colnames(dat_op_or)[7] <- "F-Temporal_detrending"
-colnames(dat_op_or)[8] <- "F-motion_regression"
-colnames(dat_op_or)[9] <- "F-Temporal_filt"
-for (opc in 2:ncol(dat_op_or)){
-  for (opr in 1:nrow(dat_op_or)){
-    opt <- dat_op_or[opr,opc]
-    if (is.na(opt)){
-      pap <- dat[opr,]
-      if (any(pap==colnames(dat_op_or[opc]))){
-        dat_op_or[opr,opc] <- "Not reported"
-      }
-      else{
-        dat_op_or[opr,opc] <- "Not used"
-      }
-    }
-  }
-} 
-dat_op_or$Software[dat_op_or$Software == "Not used"] <- "Not reported"
-dat_op_or[dat_op_or == ""] <- "Not reported" 
-cn_dat_op <- colnames(dat_op_or)
-dat_op <- read.csv(file = 'coding_options.csv')
-dat_prep_op1 <- select(dat_op, contains("Choice"))
-dat_prep_op1[dat_prep_op1 == ""] <- NA 
-steps_op <- read.csv(file = 'all_options.csv')
+gr_dec <- "AtlasDefine"
+gr_dec <- nodes$Names[nodes$Names_vis == gr_dec]
+gr_dat <- dat_op_or[ ,c(gr_dec)]
+gr_ds <- colSums(mtabulate(gr_dat))
+gr_ds <- data.frame(gr_ds)
+gr_ds$name <- row.names(gr_ds)
+colnames(gr_ds) <- c("value", "name")
+gr_ds$name <- fct_relevel(gr_ds$name, "Not_reported", "Not_used")
+custom_colors <- c("Not_reported" = "red", "Not_used" = "blue")
 
-op1 <- dat_op_or[ ,c('F-motion_regression')]
-op1_counts <- table(op1)
-op1 <- data.frame(name = names(op1_counts), count = as.vector(op1_counts))
-
-
-fig <- plot_ly(
-  type = 'scatterpolar',
-  mode = 'text+lines'
-) 
-
-fig <- fig %>%
-  add_trace(
-    r = c(0, op1$count, 0),
-    theta <- seq(0, 360, by = 360/(length(op1$count)+1)),
-    theta[length(theta)] <- 0,
-    fill = 'toself',
-    fillcolor = '#ff7f0e',
-    line = list(
-      color = 'black'
-    ),
-    name = 'Size of kernel in spatial smoothing',
-    text = c(' ', op1$name, ' '),
-    textfont = list(color = '#000000', size = 12),
-    textposition='top center',
-    opacity = 0.4
-    
-  )
-
-fig <- fig %>%
-  layout(
-    polar = list(
-      radialaxis = list(
-        visible = T
-      )
-    ),
-    showlegend = F
-  )
-
-orca(fig, "op_motion.png")
-
-
-####Citation Step
-dec_IS <-"GraphMeasDefine"
-dec_IS <- nodes$Names[which(nodes$Names_vis == dec_IS)]
-id_dec_IS <- which(dat == dec_IS, arr.ind = TRUE)
-new_tab_IS <- p_inf[id_dec_IS[, 1], ]
-a <- paste(new_tab_IS$Key, collapse = "; ")
-a
-
-####Citation Option
-dec <- "Average"
-dec1 <- "ResultAggregate"
-dec1 <- nodes$Names[which(nodes$Names_vis == dec1)]
-dat_op_or_sel <- dat_op_or[, dec1]
-id_dec <- which(dat_op_or_sel == dec, arr.ind = TRUE)
-new_tab <- p_inf[id_dec[, 1], ]
-a <- paste(new_tab$Key, collapse = "; ")
-a
-
+p <-  ggplot(gr_ds, aes(x = name, y = value)) +
+      geom_segment(aes(xend = name, yend = 0, color = name), size = 1) +
+      geom_point(aes(color = name), size = 4, alpha = 0.6) +
+      geom_text(aes(label = value), vjust = 0.5, hjust = -0.5, size = 4, color = "black", family = "Times New Roman") +
+      scale_color_manual(values = custom_colors, guide = "none") +  # Remove the legend
+      theme_light() +
+      coord_flip() +
+      theme(
+        panel.grid.major.y = element_blank(),
+        panel.border = element_blank(),
+        axis.ticks.y = element_blank(),
+        text = element_text(size = 12, family = "Times New Roman"),
+      ) +
+      labs(x = "Options", y = "Number of papers (out of 220 papers)")
+ggsave("software option.pdf", plot = p, width = 4, height = 7)
