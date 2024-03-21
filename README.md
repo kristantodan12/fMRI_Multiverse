@@ -1,7 +1,7 @@
 # fMRI_Multiverse Shiny App
 
-This repository contains the code for the METEOR shiny app accompanying this [paper] (https://doi.org/10.1101/2024.01.14.575565)
-The online version of the app is available [here] (https://meteor-oldenburg.shinyapps.io/fMRI_multiverse/)
+This repository contains the code for the METEOR shiny app accompanying this [paper](https://doi.org/10.1101/2024.01.14.575565)
+The online version of the app is available [here](https://meteor-oldenburg.shinyapps.io/fMRI_multiverse/)
 
 ## Overview
 
