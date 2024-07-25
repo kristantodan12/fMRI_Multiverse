@@ -1,0 +1,10 @@
+name: METEOR
+title:
+username: daniel-develop
+account: daniel-develop
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 12364343
+bundleId: 8906137
+url: https://daniel-develop.shinyapps.io/METEOR/
+version: 1
